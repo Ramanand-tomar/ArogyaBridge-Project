@@ -35,3 +35,26 @@ A decentralized Electronic Health Record system with:
 - **MVC architecture** for clean backend organization.
 
 <br>
+
+## 🛠️ Tech Stack
+
+## Frontend
+
+- Framework: React.js (Vite) , React-icons
+- UI Library: TailwindCSS
+- Charts: Recharts 
+- State Management: Context API
+- Blockchain Interaction: Web3.js
+
+## Backend
+- Runtime: Node.js
+- Framework: Express.js
+- Database: MongoDB
+- AI ChatBot Integration:  OpenAI API
+
+## Blockchain
+- Wallet Connection : Metamask
+- Smart Contracts: Solidity
+- Development: Truffle Suite
+- Local Blockchain: Ganache
+- File Storage: IPFS
