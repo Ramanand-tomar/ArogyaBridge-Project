@@ -119,13 +119,13 @@ A decentralized Electronic Health Record system with:
 
 * [Metamask Chrome](https://chrome.google.com/webstore/detail/metamask/nkbihfbeogaeaoehlefnkodbefgpgknn?hl=en-US)
 
-5. open cmd in project directory
+5. open cmd in project directory.
 
 ```
 npm install --force
 ```
 
-5.open cmd/terminal as Administrator and type
+5.open cmd/terminal as Administrator and type.
 
 ```
 npm install -g truffle
@@ -138,7 +138,7 @@ npm install -g truffle
  *  Select truffle-config.js in Project Directory
  *  Save Workspace
 
-7.Compile and migrate Contracts
+7.Compile and migrate Contracts.
  ```
  truffle compile
  truffle migrate
