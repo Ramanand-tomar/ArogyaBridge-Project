@@ -98,6 +98,10 @@ A decentralized Electronic Health Record system with:
 - Password Handling: Passwords are stored as hashes (though for production, consider off-chain authentication).
 - IPFS Integration: Medical files are stored off-chain on IPFS, with hashes referenced on-chain.
 
+ # 7. AI Chatbot
+- Answers basic user queries.
+ 
+
 <br>
 
 
@@ -148,3 +152,22 @@ npm install -g truffle
 ```
 npm start
 ```
+
+<br> 
+
+## ⚠️ Drawbacks & Limitations
+
+- **Ethereum Gas Fees**: Costly on public chains (can be solved via L2 chains like Polygon)
+- **IPFS Privacy**: CIDs are public; requires encryption for sensitive files
+- **Learning Curve**: MetaMask and wallets may be unfamiliar for non-tech users
+- **Offline Access**: Requires wallet and internet connection
+
+<br>
+
+## 🧪 Future Scope
+
+- End-to-end encryption for files on IPFS
+- Integration with insurance systems
+- E-prescription module for pharmacies
+- Cross-border health record portability
+- ML-based health insights from patient records
