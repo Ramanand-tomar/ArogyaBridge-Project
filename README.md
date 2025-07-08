@@ -25,13 +25,13 @@
 
 A decentralized Electronic Health Record system with:
 
-- **Ethereum blockchain** for tamper-proof access control
-- **IPFS** for decentralized file storage
-- **MetaMask** for secure login and transaction signing
-- **Smart contracts** to manage access permissions
-- **AI Chatbot** to answer patient queries and FAQs
-- **Role-based functionality** for Patients, Doctors, and Labs
-- **MongoDB** to store user metadata and analytics
-- **MVC architecture** for clean backend organization
+- **Ethereum blockchain** for tamper-proof access control.
+- **IPFS** for decentralized file storage.
+- **MetaMask** for secure login and transaction signing.
+- **Smart contracts** to manage access permissions.
+- **AI Chatbot** to answer patient queries and FAQs.
+- **Role-based functionality** for Patients, Doctors, and Labs.
+- **MongoDB** to store user metadata and analytics.
+- **MVC architecture** for clean backend organization.
 
 <br>
