@@ -1,0 +1,402 @@
+[
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "string",
+        "name": "hhNumber",
+        "type": "string"
+      },
+      {
+        "indexed": false,
+        "internalType": "string",
+        "name": "doctorName",
+        "type": "string"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "walletAddress",
+        "type": "address"
+      }
+    ],
+    "name": "DoctorRegistered",
+    "type": "event"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "name": "allDoctorHHNumbers",
+    "outputs": [
+      {
+        "internalType": "string",
+        "name": "",
+        "type": "string"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function",
+    "constant": true
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "string",
+        "name": "",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "",
+        "type": "string"
+      }
+    ],
+    "name": "doctorPermissions",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function",
+    "constant": true
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "string",
+        "name": "_doctorName",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "_hospitalName",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "_dateOfBirth",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "_gender",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "_email",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "_hhNumber",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "_specialization",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "_department",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "_designation",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "_workExperience",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "_password",
+        "type": "string"
+      }
+    ],
+    "name": "registerDoctor",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getAllDoctors",
+    "outputs": [
+      {
+        "internalType": "string[]",
+        "name": "doctorNames",
+        "type": "string[]"
+      },
+      {
+        "internalType": "string[]",
+        "name": "hospitalNames",
+        "type": "string[]"
+      },
+      {
+        "internalType": "string[]",
+        "name": "dateOfBirths",
+        "type": "string[]"
+      },
+      {
+        "internalType": "string[]",
+        "name": "genders",
+        "type": "string[]"
+      },
+      {
+        "internalType": "string[]",
+        "name": "emails",
+        "type": "string[]"
+      },
+      {
+        "internalType": "string[]",
+        "name": "hhNumbers",
+        "type": "string[]"
+      },
+      {
+        "internalType": "string[]",
+        "name": "specializations",
+        "type": "string[]"
+      },
+      {
+        "internalType": "string[]",
+        "name": "departments",
+        "type": "string[]"
+      },
+      {
+        "internalType": "string[]",
+        "name": "designations",
+        "type": "string[]"
+      },
+      {
+        "internalType": "string[]",
+        "name": "workExperiences",
+        "type": "string[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function",
+    "constant": true
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "string",
+        "name": "_hhNumber",
+        "type": "string"
+      }
+    ],
+    "name": "isRegisteredDoctor",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function",
+    "constant": true
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "string",
+        "name": "_hhNumber",
+        "type": "string"
+      }
+    ],
+    "name": "getDoctorDetails",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "_walletAddress",
+        "type": "address"
+      },
+      {
+        "internalType": "string",
+        "name": "_doctorName",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "_hospitalName",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "_dateOfBirth",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "_gender",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "_email",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "_specialization",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "_department",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "_designation",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "_workExperience",
+        "type": "string"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function",
+    "constant": true
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "string",
+        "name": "_hhNumber",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "_password",
+        "type": "string"
+      }
+    ],
+    "name": "validatePassword",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function",
+    "constant": true
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "string",
+        "name": "_patientNumber",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "_doctorNumber",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "_patientName",
+        "type": "string"
+      }
+    ],
+    "name": "grantPermission",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "string",
+        "name": "_patientNumber",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "_doctorNumber",
+        "type": "string"
+      }
+    ],
+    "name": "isPermissionGranted",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function",
+    "constant": true
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "string",
+        "name": "_patientNumber",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "_doctorNumber",
+        "type": "string"
+      }
+    ],
+    "name": "revokePermission",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "string",
+        "name": "_doctorNumber",
+        "type": "string"
+      }
+    ],
+    "name": "getPatientList",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "string",
+            "name": "patient_number",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "patient_name",
+            "type": "string"
+          }
+        ],
+        "internalType": "struct DoctorRegistration.PatientList[]",
+        "name": "",
+        "type": "tuple[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function",
+    "constant": true
+  }
+]
