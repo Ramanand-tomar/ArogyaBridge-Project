@@ -58,3 +58,38 @@ A decentralized Electronic Health Record system with:
 - Development: Truffle Suite
 - Local Blockchain: Ganache
 - File Storage: IPFS
+
+<br>
+
+## Key Features
+
+ # 1. Patient Management
+- Registration: Patients can register with personal details (name, DOB, gender, blood group, address, email, HH number, password).
+- Authentication: Login with HH number and password (validated on-chain).
+- IPFS File Upload: Patients (or admins) can upload files (e.g., medical records) to IPFS, and store the hash on-chain.
+- Data Retrieval: All patient data can be fetched and displayed in tables or charts.
+
+ # 2. Doctor Management
+- Registration: Doctors register with details like name, hospital, DOB, gender, email, HH number, specialization, department, designation, work experience, and password.
+- Authentication: Login with HH number and password.
+- Data Retrieval: All doctor data can be fetched and visualized (including specialization analytics).
+
+ # 3. Diagnosis Center Management
+- Registration: Diagnostic centers register with name, hospital, location, email, HH number, and password.
+- Authentication: Login with HH number and password.
+- Data Retrieval: All diagnostic center data can be fetched and visualized.
+  
+ # 4. Admin Panel
+- Dashboard: Visualizes system data using bar and pie charts (patients, doctors, diagnosis centers, gender distribution, doctor specializations, etc.).
+- Tables: Lists for login history, registered patients, doctors, diagnosis centers, patient files (IPFS), prescription reports, and diagnosis reports.
+- Responsive & Animated UI: Modern, animated, and responsive design using TailwindCSS and custom CSS animations.
+  
+ # 5. Feedback System
+- Submission: Users can submit feedback via the homepage.
+- Display: Feedback is fetched from the backend and displayed with animated sliders and cards.
+  
+ # 6. Security & Best Practices
+- On-chain Validation: All sensitive operations (registration, login, file upload) are validated on-chain.
+- Password Handling: Passwords are stored as hashes (though for production, consider off-chain authentication).
+- IPFS Integration: Medical files are stored off-chain on IPFS, with hashes referenced on-chain.
+
