@@ -13,9 +13,9 @@ export const Web3Provider = ({ children }) => {
   const [contract, setContract] = useState(null);
   const [network, setNetwork] = useState('');
 
-  const PatientContractAddress = import.meta.env.VITE_PATIENT_CONTRACT_ADDRESS;
-  const DoctorContractAddress = import.meta.env.VITE_DOCTOR_CONTRACT_ADDRESS;
-  const DiagnosisContractAddress = import.meta.env.VITE_DIAGNOSIS_CONTRACT_ADDRESS;
+  const PatientContractAddress = import.meta.env.VITE_PATIENT_CONTRACT_ADDRESS || "0xEb7a8580734F6476998c5c86E3B43a6b045B3E91" ;
+  const DoctorContractAddress = import.meta.env.VITE_DOCTOR_CONTRACT_ADDRESS || "0xF00aAd1026e47fe1B94735549116FE9b8Df6bd8F";
+  const DiagnosisContractAddress = import.meta.env.VITE_DIAGNOSIS_CONTRACT_ADDRESS || "0x40c63AA7b57bCb74FD4429E3D71025d3054A598E";
   const Ganache_Address = import.meta.env.VITE_GANACHE_URL;
 
   useEffect(() => {
