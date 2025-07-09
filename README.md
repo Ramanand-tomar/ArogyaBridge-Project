@@ -10,6 +10,7 @@
 - [🎯 Problem Statement](#-problem-statement)
 - [💡 Our Solution](#-our-solution)
 - [🛠️ Tech Stack](#️-tech-stack)
+- [🧩 Project Demo](#-project-demo)
 - [Key Features](#key-features)
   - [1. Patient Management](#1-patient-management)
   - [2. Doctor Management](#2-doctor-management)
