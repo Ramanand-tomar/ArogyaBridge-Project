@@ -7,11 +7,12 @@ import express from 'express';
 
 const AddingPrescrition =  async (req, res) => {
   try {
-    const { patientNumber, doctorNumber, title, description, date } = req.body;
+    const { patientNumber, doctorNumber, title, description, date , ipfsHash , fileName } = req.body;
+    console.log("Prescription data at backend is : " , req.body)
     if (!patientNumber || !doctorNumber || !title || !description || !date) {
       return res.status(400).json({ error: 'All fields are required' });
     }
-    const newPrescription = new Prescription({ patientNumber, doctorNumber, title, description, date });
+    const newPrescription = new Prescription({ patientNumber, doctorNumber, title, description, date  , ipfsHash, fileName});
     await newPrescription.save();
     res.status(201).json({ message: 'Prescription saved', prescription: newPrescription });
   } catch (err) {

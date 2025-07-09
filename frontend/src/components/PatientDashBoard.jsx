@@ -1,12 +1,7 @@
-import React, { useEffect, useState ,useContext } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import Web3 from "web3";
 import { useParams, useNavigate, Await } from "react-router-dom";
 import { Web3Context } from "../context/Web3Context";
-
-
-
-
-
 
 const PatientDashBoard = () => {
   const backend_url = import.meta.env.VITE_BACKEND_URL;
@@ -15,7 +10,7 @@ const PatientDashBoard = () => {
   const { web3, account, contract, network } = useContext(Web3Context);
 
   const Navigate = useNavigate();
-  
+
   const viewRecord = () => {
     Navigate("/patient/" + hhNumber + "/viewrecords");
   };
@@ -28,39 +23,42 @@ const PatientDashBoard = () => {
     setShowProfileModal(false);
   };
 
-  const UploadRecords = () => {   
+  const UploadRecords = () => {
     Navigate("/patient/" + hhNumber + "/uploadrecords");
-    };
-    const GrantPermission = () => {
+  };
+  const GrantPermission = () => {
     Navigate("/patient/" + hhNumber + "/grantpermission");
-    };
-  
+  };
+
   const [showPrescriptionModal, setShowPrescriptionModal] = useState(false);
   const [prescriptions, setPrescriptions] = useState([]);
 
-  
   const handlePrescriptionDetails = async () => {
-  try {
-    setShowPrescriptionModal(true);
-    const response = await fetch(`${backend_url}/api/prescriptions/${hhNumber}`);
-    if (!response.ok) throw new Error('Failed to fetch prescriptions');
-    const data = await response.json();
-    setPrescriptions(data || []);
+    try {
+      setShowPrescriptionModal(true);
+      const response = await fetch(
+        `${backend_url}/api/prescriptions/${hhNumber}`
+      );
+      if (!response.ok) throw new Error("Failed to fetch prescriptions");
+      const data = await response.json();
+      setPrescriptions(data || []);
 
-    const doctorNumber = data[0]?.doctorNumber; // get doctorNumber directly
-    if (doctorNumber) {
-      const DoctorNo = await contract.doctor.methods.getDoctorDetails(doctorNumber).call();
-      setDoctorName(DoctorNo[1]);
-      setDoctorHHNumber(doctorNumber);
-    } else {
-      console.warn("No doctor number found in prescription");
-      setDoctorName("Unknown");
+      const doctorNumber = data[0]?.doctorNumber; // get doctorNumber directly
+      if (doctorNumber) {
+        const DoctorNo = await contract.doctor.methods
+          .getDoctorDetails(doctorNumber)
+          .call();
+        setDoctorName(DoctorNo[1]);
+        setDoctorHHNumber(doctorNumber);
+      } else {
+        console.warn("No doctor number found in prescription");
+        setDoctorName("Unknown");
+      }
+    } catch (err) {
+      console.error(err);
+      setPrescriptions([]);
     }
-  } catch (err) {
-    console.error(err);
-    setPrescriptions([]);
-  }
-}
+  };
 
   const [PatientContract, setPatientContract] = useState(null);
   const [patientPhoneNo, setPatientPhoneNo] = useState(null);
@@ -69,34 +67,31 @@ const PatientDashBoard = () => {
   const [DoctorHHNumber, setDoctorHHNumber] = useState(null);
   const [DoctorName, setDoctorName] = useState(null);
 
-
   useEffect(() => {
-        const loadPatientContract = async () => {
-        if (!web3 || !contract || !hhNumber) {
-            alert("Web3 or contract not loaded or hhNumber is missing.");
-            return;
-        }
-        try {
-            const patientContract = contract.patient; // Assuming contract.patient is the Patient contract
-            console.log("Patient Contract: ", patientContract);
-            setPatientContract(patientContract);
+    const loadPatientContract = async () => {
+      if (!web3 || !contract || !hhNumber) {
+        alert("Web3 or contract not loaded or hhNumber is missing.");
+        return;
+      }
+      try {
+        const patientContract = contract.patient; // Assuming contract.patient is the Patient contract
+        console.log("Patient Contract: ", patientContract);
+        setPatientContract(patientContract);
 
-            // Fetch patient details
-            const details = await patientContract.methods.getPatientDetails(hhNumber).call();
-            
-            console.log("Patient Details: ", details);
-            setPatientDetails(details);  // patient profile details
-        } catch (err) {
-            console.error("Error loading patient contract:", err);
-            alert("Failed to load patient details. Please try again later.");
-        }
+        // Fetch patient details
+        const details = await patientContract.methods
+          .getPatientDetails(hhNumber)
+          .call();
+
+        console.log("Patient Details: ", details);
+        setPatientDetails(details); // patient profile details
+      } catch (err) {
+        console.error("Error loading patient contract:", err);
+        alert("Failed to load patient details. Please try again later.");
+      }
     };
-    loadPatientContract();   
-       
-    }, [contract, web3, hhNumber]);
-
-    
- 
+    loadPatientContract();
+  }, [contract, web3, hhNumber]);
 
   // Logout handler
   const handleLogout = () => {
@@ -111,7 +106,7 @@ const PatientDashBoard = () => {
       {/* <NavBar_Logout /> */}
       <div
         className="relative bg-gradient-to-b from-black to-gray-800 p-0 font-mono text-white min-h-screen flex flex-col justify-center items-center overflow-hidden"
-        style={{ minHeight: '100vh' }}
+        style={{ minHeight: "100vh" }}
       >
         {/* Top-right Logout Button */}
         <div className="absolute top-8 right-10 z-30 animate-fade-in">
@@ -124,10 +119,10 @@ const PatientDashBoard = () => {
         </div>
         {/* Background Image for Modern UI */}
         <img
-          src= "https://images.unsplash.com/photo-1522071820081-009f0129c71c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80"
+          src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80"
           alt="Healthcare Dashboard"
           className="absolute inset-0 w-full h-full object-cover object-center opacity-90 z-0"
-          style={{ filter: 'blur(0.5px) brightness(0.95)' }}
+          style={{ filter: "blur(0.5px) brightness(0.95)" }}
         />
         {/* Overlay for glassmorphism effect */}
         <div className="absolute inset-0 bg-gradient-to-b from-black/70 to-teal-900/60 z-10" />
@@ -139,7 +134,10 @@ const PatientDashBoard = () => {
               </h2>
               {patientDetails && (
                 <p className="text-2xl sm:text-3xl mb-10 text-white text-center font-semibold">
-                  Welcome <span className="font-bold text-yellow-400">{patientDetails.name}!</span>
+                  Welcome{" "}
+                  <span className="font-bold text-yellow-400">
+                    {patientDetails.name}!
+                  </span>
                 </p>
               )}
               <div className="flex flex-wrap justify-center gap-6 w-full mt-2">
@@ -174,12 +172,13 @@ const PatientDashBoard = () => {
                   Prescription Details
                 </button>
                 <button
-                  onClick={() => Navigate("/patient/" + hhNumber + "/diagnosticreport")}
+                  onClick={() =>
+                    Navigate("/patient/" + hhNumber + "/diagnosticreport")
+                  }
                   className="my-2 px-6 sm:px-10 py-5 w-full sm:w-1/4 rounded-xl bg-gradient-to-r from-green-400 to-blue-400 text-gray-900 font-bold text-lg shadow-lg hover:from-green-500 hover:to-blue-500 transition-all duration-200 border border-green-200/30"
                 >
                   Diagnotic Centre Report
                 </button>
-               
               </div>
             </div>
           </div>
@@ -241,15 +240,21 @@ const PatientDashBoard = () => {
                     <span className="text-gray-400 text-xs font-semibold uppercase tracking-wider">
                       DOB
                     </span>
-                    <span className="text-lg text-white">{patientDetails.dateOfBirth}</span>
+                    <span className="text-lg text-white">
+                      {patientDetails.dateOfBirth}
+                    </span>
                     <span className="text-gray-400 text-xs font-semibold uppercase tracking-wider">
                       Gender
                     </span>
-                    <span className="text-lg text-white">{patientDetails.gender}</span>
+                    <span className="text-lg text-white">
+                      {patientDetails.gender}
+                    </span>
                     <span className="text-gray-400 text-xs font-semibold uppercase tracking-wider">
                       Blood Group
                     </span>
-                    <span className="text-lg text-white">{patientDetails.bloodGroup}</span>
+                    <span className="text-lg text-white">
+                      {patientDetails.bloodGroup}
+                    </span>
                   </div>
                   <div className="flex flex-col gap-2">
                     <span className="text-gray-400 text-xs font-semibold uppercase tracking-wider">
@@ -291,17 +296,51 @@ const PatientDashBoard = () => {
                 >
                   &times;
                 </button>
-                <h2 className="text-3xl font-extrabold mb-6 text-green-300 drop-shadow text-center">Prescription Details</h2>
+                <h2 className="text-3xl font-extrabold mb-6 text-green-300 drop-shadow text-center">
+                  Prescription Details
+                </h2>
                 {prescriptions.length > 0 ? (
                   <ul className="w-full space-y-4 mb-4">
                     {prescriptions.map((pres, idx) => (
-                      <li key={idx} className="bg-gray-800 rounded-lg px-4 py-3 shadow flex flex-col gap-1">
-                        <span className="text-lg font-bold text-green-300">{pres.title}</span>
+                      <li
+                        key={idx}
+                        className="bg-gray-800 rounded-lg px-4 py-3 shadow flex flex-col gap-1"
+                      >
+                        <span className="text-lg font-bold text-green-300">
+                          {pres.title}
+                        </span>
                         <span className="text-white">{pres.description}</span>
-                        <span className="text-sm text-gray-400">Doctor Number: {pres.doctorNumber}</span>
-                        <span className="text-sm text-gray-400">Doctor Name: {DoctorName}</span>
-                        <span className="text-sm text-gray-400">Date: {pres.date}</span>
-                        <span className="text-xs text-gray-500">Created At: {new Date(pres.createdAt).toLocaleString()}</span>
+                        <span className="text-sm text-gray-400">
+                          Doctor Number: {pres.doctorNumber}
+                        </span>
+                        <span className="text-sm text-gray-400">
+                          Doctor Name: {DoctorName}
+                        </span>
+                        <span className="text-sm text-gray-400">
+                          Created At: {pres.date}
+                        </span>
+                        <a
+                          href={`https://ipfs.io/ipfs/${pres.ipfsHash}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center gap-1 text-blue-400 underline hover:text-blue-300 transition-colors duration-150 font-medium"
+                        >
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            className="h-5 w-5"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M15.172 7l-6.586 6.586a2 2 0 002.828 2.828l6.586-6.586a2 2 0 00-2.828-2.828z"
+                            />
+                          </svg>
+                          View Elctronic File
+                        </a>
                       </li>
                     ))}
                   </ul>
