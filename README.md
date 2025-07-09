@@ -201,3 +201,32 @@ npm run dev
 - E-prescription module for pharmacies
 - Cross-border health record portability
 - ML-based health insights from patient records
+
+  <br>
+
+## 🧩 Core Features
+
+### ✅ General
+- MetaMask login for all users (no passwords)
+- Role selection: Patient, Doctor, Diagnostic Lab
+- User data stored in MongoDB
+
+### 👤 Patient
+- Upload medical records (PDF, images, etc.)
+- Grant or revoke access to doctors or labs
+- View access logs and history
+
+### 🧑‍⚕ Doctor
+- View accessible patient reports
+- Upload diagnosis or consultation notes
+- Request access if not granted
+
+### 🧪 Diagnostic Center
+- Upload lab reports
+- Share with patients and doctors via IPFS + smart contract
+
+### 🔐 Security & Decentralization
+- All files stored on IPFS for immutability
+- Access control via Ethereum smart contracts
+- Access requests are signed transactions
+- Audit logs stored both on-chain and in MongoDB
