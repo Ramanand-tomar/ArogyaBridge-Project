@@ -261,7 +261,15 @@ npm run dev
 <br>
 
 ## 🧩 Project Demo
--Landing Page
+- Landing Page
 ![Landing Page](frontend/public/Screenshot%202025-07-09%20211846.png)
 ![Landing Page](frontend/public/Screenshot%202025-07-09%20212250.png)
 
+- User Feedback
+![Landing Page](frontend/public/Screenshot%202025-07-09%20212923.png)
+
+- About 
+![Landing Page](frontend/public/Screenshot%202025-07-09%20213001.png)
+
+- Patient Registration
+![Landing Page](frontend/public/Screenshot%202025-07-09%20213059.png)
