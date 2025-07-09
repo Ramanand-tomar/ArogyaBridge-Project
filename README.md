@@ -326,5 +326,30 @@ npm run dev
 
 ![Landing Page](frontend/public/Screenshot%202025-07-09%20214642.png)
 
+- Patient's Presciption
+
+![Landing Page](frontend/public/Screenshot%202025-07-09%20214705.png)
+
+- ArogyaBrigde Prescription
+
+![Landing Page](frontend/public/Screenshot%202025-07-09%20214835.png)
+
+- ArogyaBrigde Chatbot
+
+![Landing Page](frontend/public/Screenshot%202025-07-09%20214941.png)
+
+- Admin Panel
+
+![Landing Page](frontend/public/Screenshot%202025-07-09%20221347.png)
+
+- System Overview / User Login History
+
+![Landing Page](frontend/public/Screenshot%202025-07-09%20221404.png)
+
+- Patient's Files and Reports 
+
+![Landing Page](frontend/public/Screenshot%202025-07-09%20221444.png)
+
+
 
 
