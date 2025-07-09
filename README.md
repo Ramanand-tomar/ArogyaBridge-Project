@@ -298,5 +298,33 @@ npm run dev
 
 ![Landing Page](frontend/public/Screenshot%202025-07-09%20213552.png)
 
+- Grant Permission to your Doctor
+
+![Landing Page](frontend/public/Screenshot%202025-07-09%20213830.png)
+
+- Prescription Details 
+
+![Landing Page](frontend/public/Screenshot%202025-07-09%20213854.png)
+
+- Diagonostic Centre Dashboard
+
+![Landing Page](frontend/public/Screenshot%202025-07-09%20214024.png)
+
+- Diagonostic Report Creation
+
+![Landing Page](frontend/public/Screenshot%202025-07-09%20214103.png)
+
+-  Diagonostic Report Details
+
+![Landing Page](frontend/public/Screenshot%202025-07-09%20214457.png)
+
+- Doctor Profile
+
+![Landing Page](frontend/public/Screenshot%202025-07-09%20214611.png)
+
+- Patient's Details to Doctor
+
+![Landing Page](frontend/public/Screenshot%202025-07-09%20214642.png)
+
 
 
