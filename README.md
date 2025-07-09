@@ -29,6 +29,7 @@
   - [🔐 Security & Decentralization](#-security--decentralization)
 
 <br>
+
 ## 🚀 Project Overview
 
 **ArogyaBridge** is a blockchain-powered platform that enables secure, tamper-proof, and decentralized storage of medical records. It empowers **patients** with ownership and control over their health data, while providing **doctors** and **diagnostic centers** seamless yet permissioned access. The system ensures **trust, traceability, and transparency** — eliminating the risks of centralized failures, data leaks, and fake reports.
