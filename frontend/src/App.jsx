@@ -4,8 +4,8 @@ import React from 'react';
 
 
 // import Login from "./components/LoginPage.jsx"
-// import About from './components/About.jsx';
-// import Homepage from './components/Homepage.jsx';
+import About from './components/About.jsx';
+import Homepage from './components/Homepage.jsx';
 import Walletconnect from './components/Walletconnect.jsx'
 // import DiagnosisRegistration from './components/DiagnosisRegistration.jsx';
 // import DoctorRegistration from './components/DoctorRegistration.jsx'; 
@@ -78,14 +78,14 @@ function App() {
     //   path: "/login",
     //   element: <Login />,
     // },
-    // { 
-    //   path: "/about",
-    //   element: <About />,
-    // },
-    // { 
-    //   path: "/home",
-    //   element: <Homepage />,
-    // },
+    { 
+      path: "/about",
+      element: <About />,
+    },
+    { 
+      path: "/home",
+      element: <Homepage />,
+    },
     // {
     //   path: "/diagnosis-Registration",
     //   element: <DiagnosisRegistration />,
