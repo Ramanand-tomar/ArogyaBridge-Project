@@ -262,14 +262,41 @@ npm run dev
 
 ## 🧩 Project Demo
 - Landing Page
+  
 ![Landing Page](frontend/public/Screenshot%202025-07-09%20211846.png)
 ![Landing Page](frontend/public/Screenshot%202025-07-09%20212250.png)
 
 - User Feedback
+  
 ![Landing Page](frontend/public/Screenshot%202025-07-09%20212923.png)
 
-- About 
+- About
+   
 ![Landing Page](frontend/public/Screenshot%202025-07-09%20213001.png)
 
 - Patient Registration
+  
 ![Landing Page](frontend/public/Screenshot%202025-07-09%20213059.png)
+
+- Login
+
+![Landing Page](frontend/public/Screenshot%202025-07-09%20213336.png)
+
+- Patient Dashboard
+
+![Landing Page](frontend/public/Screenshot%202025-07-09%20213421.png)
+
+- Patient's Profile
+
+![Landing Page](frontend/public/Screenshot%202025-07-09%20213439.png)
+
+- Uploading Past Records
+
+![Landing Page](frontend/public/Screenshot%202025-07-09%20213521.png)
+
+- Patient's Record
+
+![Landing Page](frontend/public/Screenshot%202025-07-09%20213552.png)
+
+
+
