@@ -105,7 +105,14 @@ A decentralized Electronic Health Record system with:
 <br>
 
 
-## Requirements for this projects
+## Requirements for this projects (How to Run in Your PC)
+
+## 📂 Clone the Repository
+
+```
+git clone https://github.com/Ramanand-tomar/ArogyaBridge-Project
+cd  ArogyaBridge-Project
+```
 
 1.Install nodeJs
 
@@ -129,29 +136,52 @@ A decentralized Electronic Health Record system with:
 npm install --force
 ```
 
-5.open cmd/terminal as Administrator and type.
+6.open cmd/terminal as Administrator and type.
 
 ```
 npm install -g truffle
 ```
 
-6.open Ganache
+7.open Ganache
  
  *  New Workspace
  *  AddProject
  *  Select truffle-config.js in Project Directory
  *  Save Workspace
 
-7.Compile and migrate Contracts.
+
+
+8. Make Metamask New Account By Adding Ganache Private key Account
+
+
+9. Compile and migrate Contracts.
  ```
  truffle compile
- truffle migrate
+ truffle migrate --reset
  ```
-8. Run Server
+
+10. Replaces Smart Contracts deployed Address
+    
+    
+11. Replace ABIs into json files and changes ABI folder files
+
+
+12. Make JWT key of IPFS using Pinata Library [IPFS](https://app.pinata.cloud/ipfs/files) and Replace it in your project file connection to ipfs
+    
+
+13. Run frontent
 
 ```
-npm start
+npm run dev
 ```
+
+13. Connect Backend with MongoDb
+  
+   
+14. Run Backend server
+    ```
+     npm start
+    ```
 
 <br> 
 
