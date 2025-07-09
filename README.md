@@ -261,4 +261,4 @@ npm run dev
 <br>
 
 ## 🧩 Project Demo
-![Landing Page](frontend/public/images/Screenshot-2025-07-09-211846.png)
+![Landing Page](frontend/public/Screenshot%202025-07-09%20212250.png)
