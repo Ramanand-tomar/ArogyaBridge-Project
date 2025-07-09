@@ -5,6 +5,32 @@
 
 <br>
 
+## 📚 Table of Contents
+- [🚀 Project Overview](#-project-overview)
+- [🎯 Problem Statement](#-problem-statement)
+- [💡 Our Solution](#-our-solution)
+- [🛠️ Tech Stack](#️-tech-stack)
+- [🧩 Project Demo](#-project-demo)
+- [Key Features](#key-features)
+  - [1. Patient Management](#1-patient-management)
+  - [2. Doctor Management](#2-doctor-management)
+  - [3. Diagnosis Center Management](#3-diagnosis-center-management)
+  - [4. Admin Panel](#4-admin-panel)
+  - [5. Feedback System](#5-feedback-system)
+  - [6. Security & Best Practices](#6-security--best-practices)
+  - [7. AI Chatbot](#7-ai-chatbot)
+- [Requirements for this project (How to Run on Your PC)](#requirements-for-this-projects-how-to-run-in-your-pc)
+- [⚠️ Drawbacks & Limitations](#️-drawbacks--limitations)
+- [🧪 Future Scope](#-future-scope)
+- [🧩 Core Features](#-core-features)
+  - [✅ General](#-general)
+  - [👤 Patient](#-patient)
+  - [🧑‍⚕ Doctor](#-doctor)
+  - [🧪 Diagnostic Center](#-diagnostic-center)
+  - [🔐 Security & Decentralization](#-security--decentralization)
+
+<br>
+
 ## 🚀 Project Overview
 
 **ArogyaBridge** is a blockchain-powered platform that enables secure, tamper-proof, and decentralized storage of medical records. It empowers **patients** with ownership and control over their health data, while providing **doctors** and **diagnostic centers** seamless yet permissioned access. The system ensures **trust, traceability, and transparency** — eliminating the risks of centralized failures, data leaks, and fake reports.
