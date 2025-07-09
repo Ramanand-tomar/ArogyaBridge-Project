@@ -28,7 +28,8 @@
   - [🧑‍⚕ Doctor](#-doctor)
   - [🧪 Diagnostic Center](#-diagnostic-center)
   - [🔐 Security & Decentralization](#-security--decentralization)
-
+- [🧩 Project Demo](#-project-demo)
+  
 <br>
 
 ## 🚀 Project Overview
@@ -256,3 +257,74 @@ npm run dev
 - Access control via Ethereum smart contracts
 - Access requests are signed transactions
 - Audit logs stored both on-chain and in MongoDB
+
+<br>
+
+## 🧩 Project Demo
+- Landing Page
+  
+![Landing Page](frontend/public/Screenshot%202025-07-09%20211846.png)
+![Landing Page](frontend/public/Screenshot%202025-07-09%20212250.png)
+
+- User Feedback
+  
+![Landing Page](frontend/public/Screenshot%202025-07-09%20212923.png)
+
+- About
+   
+![Landing Page](frontend/public/Screenshot%202025-07-09%20213001.png)
+
+- Patient Registration
+  
+![Landing Page](frontend/public/Screenshot%202025-07-09%20213059.png)
+
+- Login
+
+![Landing Page](frontend/public/Screenshot%202025-07-09%20213336.png)
+
+- Patient Dashboard
+
+![Landing Page](frontend/public/Screenshot%202025-07-09%20213421.png)
+
+- Patient's Profile
+
+![Landing Page](frontend/public/Screenshot%202025-07-09%20213439.png)
+
+- Uploading Past Records
+
+![Landing Page](frontend/public/Screenshot%202025-07-09%20213521.png)
+
+- Patient's Record
+
+![Landing Page](frontend/public/Screenshot%202025-07-09%20213552.png)
+
+- Grant Permission to your Doctor
+
+![Landing Page](frontend/public/Screenshot%202025-07-09%20213830.png)
+
+- Prescription Details 
+
+![Landing Page](frontend/public/Screenshot%202025-07-09%20213854.png)
+
+- Diagonostic Centre Dashboard
+
+![Landing Page](frontend/public/Screenshot%202025-07-09%20214024.png)
+
+- Diagonostic Report Creation
+
+![Landing Page](frontend/public/Screenshot%202025-07-09%20214103.png)
+
+-  Diagonostic Report Details
+
+![Landing Page](frontend/public/Screenshot%202025-07-09%20214457.png)
+
+- Doctor Profile
+
+![Landing Page](frontend/public/Screenshot%202025-07-09%20214611.png)
+
+- Patient's Details to Doctor
+
+![Landing Page](frontend/public/Screenshot%202025-07-09%20214642.png)
+
+
+
