@@ -55,7 +55,7 @@ A decentralized Electronic Health Record system with:
 - Runtime: Node.js
 - Framework: Express.js
 - Database: MongoDB
-- AI ChatBot Integration:  OpenAI API
+- AI ChatBot Integration:  Gemini API
 
 ## Blockchain
 - Wallet Connection : Metamask
