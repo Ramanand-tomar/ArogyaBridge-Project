@@ -28,7 +28,8 @@
   - [🧑‍⚕ Doctor](#-doctor)
   - [🧪 Diagnostic Center](#-diagnostic-center)
   - [🔐 Security & Decentralization](#-security--decentralization)
-
+- [🧩 Project Demo](#-project-demo)
+  
 <br>
 
 ## 🚀 Project Overview
@@ -256,3 +257,8 @@ npm run dev
 - Access control via Ethereum smart contracts
 - Access requests are signed transactions
 - Audit logs stored both on-chain and in MongoDB
+
+<br>
+
+## 🧩 Project Demo
+![Landing Page](frontend/public/images/Screenshot-2025-07-09-211846.png)
