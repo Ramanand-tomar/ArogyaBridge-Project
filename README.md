@@ -262,6 +262,6 @@ npm run dev
 
 ## 🧩 Project Demo
 -Landing Page
-![Landing Page](frontend/public/Screenshot%202025-07-09%20212250.png)
+![Landing Page](frontend/public/Screenshot%202025-07-09%20212246.png)
 ![Landing Page](frontend/public/Screenshot%202025-07-09%20212250.png)
 
