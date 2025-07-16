@@ -3,26 +3,26 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import React from 'react';
 
 
-// import Login from "./components/LoginPage.jsx"
+import Login from "./components/LoginPage.jsx"
 import About from './components/About.jsx';
 import Homepage from './components/Homepage.jsx';
 import Walletconnect from './components/Walletconnect.jsx'
-// import DiagnosisRegistration from './components/DiagnosisRegistration.jsx';
-// import DoctorRegistration from './components/DoctorRegistration.jsx'; 
-// import PatientRegistration from './components/PatientRegistration.jsx';
-// import PatientDashBoard from './components/PatientDashBoard.jsx';
-// import DoctorDashBoard from './components/DoctorDashBoard.jsx';
-// import DiagnosticDashBoard from './components/DiagnosisDashBoard.jsx';
-// import ViewRecrods from './components/ViewRecrods.jsx';
-// import UploadRecords from './components/UploadRecords.jsx';
-// import GrantPermission from './components/GrantPermission.jsx';
-// import DoctorPrescription from './components/DoctorPrecription.jsx';
-// import DoctorProfile from './components/DoctorProfile.jsx';
-// import PatientList from './components/PatientList.jsx';
-// import DoctorViewPatient from './components/DoctorViewPatient.jsx';
-// import DiagnosisForm from './components/DiagnosisForm.jsx';
-// import DiagnosticReport from './components/DiagnosticReport.jsx';
-// import Admin_Panel from './components/Admin_Panel.jsx';
+import DiagnosisRegistration from './components/DiagnosisRegistration.jsx';
+import DoctorRegistration from './components/DoctorRegistration.jsx'; 
+import PatientRegistration from './components/PatientRegistration.jsx';
+import PatientDashBoard from './components/PatientDashBoard.jsx';
+import DoctorDashBoard from './components/DoctorDashBoard.jsx';
+import DiagnosticDashBoard from './components/DiagnosisDashBoard.jsx';
+import ViewRecrods from './components/ViewRecrods.jsx';
+import UploadRecords from './components/UploadRecords.jsx';
+import GrantPermission from './components/GrantPermission.jsx';
+import DoctorPrescription from './components/DoctorPrecription.jsx';
+import DoctorProfile from './components/DoctorProfile.jsx';
+import PatientList from './components/PatientList.jsx';
+import DoctorViewPatient from './components/DoctorViewPatient.jsx';
+import DiagnosisForm from './components/DiagnosisForm.jsx';
+import DiagnosticReport from './components/DiagnosticReport.jsx';
+import Admin_Panel from './components/Admin_Panel.jsx';
 
 
 
@@ -74,10 +74,10 @@ function App() {
         </>
       ),
     },
-    // {
-    //   path: "/login",
-    //   element: <Login />,
-    // },
+    {
+      path: "/login",
+      element: <Login />,
+    },
     { 
       path: "/about",
       element: <About />,
@@ -86,71 +86,71 @@ function App() {
       path: "/home",
       element: <Homepage />,
     },
-    // {
-    //   path: "/diagnosis-Registration",
-    //   element: <DiagnosisRegistration />,
-    // },
-    // { 
-    //   path: "/doctor-Registration",
-    //   element: <DoctorRegistration />,
-    // },
-    // {
-    //   path: "/patient-Registration",
-    //   element: <PatientRegistration />,
-    // },
-    // { 
-    //   path: "/patient/:hhNumber",
-    //   element: <PatientDashBoard />,
-    // },
-    // { 
-    //   path: "/doctor/:hhNumber",
-    //   element: <DoctorDashBoard />,
-    // },
-    // { 
-    //   path: "/diagnosis/:hhNumber",
-    //   element: <DiagnosticDashBoard />,
-    // },
+    {
+      path: "/diagnosis-Registration",
+      element: <DiagnosisRegistration />,
+    },
+    { 
+      path: "/doctor-Registration",
+      element: <DoctorRegistration />,
+    },
+    {
+      path: "/patient-Registration",
+      element: <PatientRegistration />,
+    },
+    { 
+      path: "/patient/:hhNumber",
+      element: <PatientDashBoard />,
+    },
+    { 
+      path: "/doctor/:hhNumber",
+      element: <DoctorDashBoard />,
+    },
+    { 
+      path: "/diagnosis/:hhNumber",
+      element: <DiagnosticDashBoard />,
+    },
   
-    // {
-    //   path: "/patient/:hhNumber/viewrecords",
-    //   element: <ViewRecrods />,
-    // },
-    // {
-    //   path: "/patient/:hhNumber/uploadrecords",
-    //   element: <UploadRecords />, 
-    // },
-    // {
-    //   path: "/patient/:hhNumber/grantpermission",
-    //   element: <GrantPermission />,
-    // },
-    // {
-    //   path: "/doctor/:hhNumber/doctorviewpatient/:patient_Number/doctor-Prescription",
-    //   element: <DoctorPrescription />,
-    // },
-    // {
-    //   path: "/doctor/:hhNumber/viewdoctorprofile",
-    //   element: <DoctorProfile />,
-    // },
-    // {
-    //   path: "/doctor/:hhNumber/patientlist",
-    //   element: <PatientList />,
-    // },
-    // {
-    //   path: "/doctor/:hhNumber/doctorviewpatient/:patient_Number",
-    //   element: <DoctorViewPatient />, 
-    // },
-    // {
-    //   path: "/diagnosis/:hhNumber/diagnosisform",
-    //   element: <DiagnosisForm />,
-    // },
-    // {
-    //   path: "/patient/:hhNumber/diagnosticreport",
-    //   element: <DiagnosticReport />,
-    // },
-    // {
-    //   path: "/admin-panel",
-    //   element: <Admin_Panel />,
-    // }
+    {
+      path: "/patient/:hhNumber/viewrecords",
+      element: <ViewRecrods />,
+    },
+    {
+      path: "/patient/:hhNumber/uploadrecords",
+      element: <UploadRecords />, 
+    },
+    {
+      path: "/patient/:hhNumber/grantpermission",
+      element: <GrantPermission />,
+    },
+    {
+      path: "/doctor/:hhNumber/doctorviewpatient/:patient_Number/doctor-Prescription",
+      element: <DoctorPrescription />,
+    },
+    {
+      path: "/doctor/:hhNumber/viewdoctorprofile",
+      element: <DoctorProfile />,
+    },
+    {
+      path: "/doctor/:hhNumber/patientlist",
+      element: <PatientList />,
+    },
+    {
+      path: "/doctor/:hhNumber/doctorviewpatient/:patient_Number",
+      element: <DoctorViewPatient />, 
+    },
+    {
+      path: "/diagnosis/:hhNumber/diagnosisform",
+      element: <DiagnosisForm />,
+    },
+    {
+      path: "/patient/:hhNumber/diagnosticreport",
+      element: <DiagnosticReport />,
+    },
+    {
+      path: "/admin-panel",
+      element: <Admin_Panel />,
+    }
   ]);
 
   
