@@ -7,6 +7,7 @@
 
 ## 🔗 Live Demo  
 👉 [Click here to view the live demo](https://arogya-bridge.vercel.app)
+- make sure you have metamask account to open this project
 
 
 ## 📚 Table of Contents
