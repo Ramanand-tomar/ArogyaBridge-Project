@@ -2,6 +2,7 @@ import React, { useEffect, useState, useContext } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { Web3Context } from "../context/Web3Context";
+import DashboardHeader from "./DashboardHeader";
 import {
   BarChart,
   Bar,
@@ -185,65 +186,45 @@ const Admin_Panel = () => {
     );
   }
 
-  return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-800 p-6 font-mono text-white">
-      <div className="absolute top-8 right-10 z-30 animate-fade-in">
-        <button
-          onClick={() => {
-            navigate("/home");
-          }}
-          className="px-6 py-2 bg-gradient-to-r from-pink-700 to-blue-900 text-white rounded-xl font-bold text-lg shadow-lg hover:from-gray-900 hover:to-black transition-all duration-200 border border-gray-400/30"
-        >
-          Go To Home
-        </button>
-      </div>
-      <h1 className="text-4xl font-extrabold text-center text-teal-400 mb-8 drop-shadow animate-bounce ">
-        Admin Panel
-      </h1>
-      
+  const adminMetrics = [
+    { label: "IPFS Patient Files", count: patients.length, icon: "📁", badgeBg: "bg-teal-500/10", badgeColor: "text-teal-400" },
+    { label: "Digital Prescriptions", count: prescriptionReports.length, icon: "💊", badgeBg: "bg-blue-500/10", badgeColor: "text-blue-400" },
+    { label: "Diagnosis Reports", count: diagnosisReports.length, icon: "🔬", badgeBg: "bg-pink-500/10", badgeColor: "text-pink-400" },
+    { label: "User Session Logins", count: LoginHistoryData.length, icon: "🔐", badgeBg: "bg-purple-500/10", badgeColor: "text-purple-400" },
+    { label: "Patients Registered", count: AllPatients.length, icon: "👤", badgeBg: "bg-emerald-500/10", badgeColor: "text-emerald-400" },
+    { label: "Doctors Registered", count: AllDoctors.length, icon: "👨‍⚕️", badgeBg: "bg-amber-500/10", badgeColor: "text-amber-400" },
+    { label: "Diagnostic Centers", count: AllDiagnosis.length, icon: "🏥", badgeBg: "bg-cyan-500/10", badgeColor: "text-cyan-400" },
+  ];
 
-      <div className="flex flex-wrap justify-center gap-6 mb-10 backdrop-blur-lg p-10 rounded-3xl shadow-2xl border border-teal-400/30 flex-row items-center animate-fade-in">
-        <div className="bg-teal-600 rounded-2xl  shadow-lg p-6 min-w-[220px] text-center">
-          <div className="text-2xl font-bold">Total Patient Files</div>
-          <div className="text-5xl font-extrabold mt-2">{patients.length}</div>
+  return (
+    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col relative overflow-hidden">
+      <DashboardHeader portalTitle="Admin Analytics" roleBadge="Admin Panel" />
+
+      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-8 py-10">
+        <div className="text-center mb-10">
+          <h1 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
+            Administrative & Clinical Analytics
+          </h1>
+          <p className="text-sm text-slate-400 mt-2">
+            Real-time on-chain registry audit trails and decentralized storage activity across ArogyaBridge.
+          </p>
         </div>
-        <div className="bg-blue-600 rounded-2xl shadow-lg p-6 min-w-[220px] text-center">
-          <div className="text-2xl font-bold">Total Prescriptions</div>
-          <div className="text-5xl font-extrabold mt-2">
-            {prescriptionReports.length}
-          </div>
+
+        {/* 4-column metric grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-10">
+          {adminMetrics.map((m, idx) => (
+            <div
+              key={idx}
+              className="p-5 rounded-2xl bg-slate-900/85 border border-slate-800 shadow-xl flex flex-col justify-between hover:border-slate-700 transition"
+            >
+              <div className="flex items-center justify-between mb-3">
+                <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">{m.label}</span>
+                <span className={`p-2 rounded-xl text-lg ${m.badgeBg} ${m.badgeColor}`}>{m.icon}</span>
+              </div>
+              <div className="text-3xl font-extrabold text-white">{m.count}</div>
+            </div>
+          ))}
         </div>
-        <div className="bg-pink-500 rounded-2xl shadow-lg p-6 min-w-[220px] text-center">
-          <div className="text-2xl font-bold">Diagnosis Reports</div>
-          <div className="text-5xl font-extrabold mt-2">
-            {diagnosisReports.length}
-          </div>
-        </div>
-        <div className="bg-teal-500 rounded-2xl shadow-lg p-6 min-w-[220px] text-center">
-          <div className="text-2xl font-bold">Total Users Logins</div>
-          <div className="text-5xl font-extrabold mt-2">
-            {LoginHistoryData.length}
-          </div>
-        </div>
-        <div className="bg-purple-600 rounded-2xl shadow-lg p-6 min-w-[220px] text-center">
-          <div className="text-2xl font-bold"> Patients Registered</div>
-          <div className="text-5xl font-extrabold mt-2">
-            {AllPatients.length}
-          </div>
-        </div>
-        <div className="bg-orange-400 rounded-2xl shadow-lg p-6 min-w-[220px] text-center">
-          <div className="text-2xl font-bold">Doctor Registered</div>
-          <div className="text-5xl font-extrabold mt-2">
-            {AllDoctors.length}
-          </div>
-        </div>
-        <div className="bg-green-500 rounded-2xl shadow-lg p-6 min-w-[220px] text-center">
-          <div className="text-2xl font-bold">Diagnosis Center Registered</div>
-          <div className="text-5xl font-extrabold mt-2">
-            {AllDiagnosis.length}
-          </div>
-        </div>
-      </div>
   
      <div className="m-4 flex flex-col md:flex-row items-center justify-center gap-6 animate-fade-in border border-teal-400 rounded-xl bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 shadow-2xl">
   <div className="bg-gray-900 rounded-2xl shadow-xl p-6 w-full md:w-[400px] flex-1 transition-transform duration-300 hover:scale-105 animate-slide-in-up">
@@ -351,11 +332,11 @@ const Admin_Panel = () => {
           <table className="min-w-full bg-gray-800 text-white">
             <thead>
               <tr className="bg-teal-700 text-teal-100 border-teal-400/30">
-                <th className="py-2 px-4">hhNumber</th>
+                <th className="py-2 px-4">HH Number</th>
                 <th className="py-2 px-4">Name</th>
                 <th className="py-2 px-4">Hospital</th>
-                <th className="py-2 px-4">Specilization</th>
-                <th className="py-2 px-4">Experiance</th>
+                <th className="py-2 px-4">Specialization</th>
+                <th className="py-2 px-4">Experience</th>
               </tr>
             </thead>
             <tbody>
@@ -540,6 +521,7 @@ const Admin_Panel = () => {
           </table>
         </div>
       </div>
+      </main>
     </div>
   );
 };

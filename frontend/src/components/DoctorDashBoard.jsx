@@ -1,104 +1,125 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Web3Context } from "../context/Web3Context";
+import DashboardHeader from "./DashboardHeader";
+import toast, { Toaster } from "react-hot-toast";
 
 const DoctorDashBoard = () => {
-  const { web3, account, contract, network } = React.useContext(Web3Context);
+  const { web3, account, contract } = useContext(Web3Context);
   const { hhNumber } = useParams();
   const navigate = useNavigate();
-  const [DoctorContract, setDoctorContract] = useState(null);
+
   const [doctorDetails, setDoctorDetails] = useState(null);
   const [error, setError] = useState(null);
-  const [loading, setLoading] = useState(true); // For buffing animation
-
-  const viewPatientList = () => {
-    navigate("/doctor/" + hhNumber + "/patientlist");
-  };
-
-  const viewDoctorProfile = () => {
-    navigate("/doctor/" + hhNumber + "/viewdoctorprofile");
-  };
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const init = async () => {
-      if (!web3 || !account || !contract) {
-        alert("Web3 or contract not initialized");
+      if (!contract || !contract.doctor || !hhNumber) {
         setLoading(false);
         return;
-      } else {
-        try {
-          const result = await contract.doctor.methods
-            .getDoctorDetails(hhNumber)
-            .call();
-          setDoctorContract(contract.doctor);
-          setDoctorDetails(result);
-        } catch (err) {
-          console.error("Error fetching doctor details:", err);
-          setError("Failed to fetch doctor details");
-        }
+      }
+      try {
+        setLoading(true);
+        const result = await contract.doctor.methods.getDoctorDetails(hhNumber).call();
+        setDoctorDetails(result);
+        setError(null);
+      } catch (err) {
+        console.error("Error fetching doctor details:", err);
+        setError("Could not retrieve doctor credentials from smart contract.");
+      } finally {
         setLoading(false);
       }
     };
     init();
-  }, [hhNumber]);
-
-  const handleLogout = () => {
-    localStorage.removeItem("arogya_auth_token");
-    localStorage.removeItem("arogya_user");
-    navigate("/login");
-  };
+  }, [contract, hhNumber]);
 
   return (
-    <div className="relative min-h-screen bg-gradient-to-b from-black to-gray-800 font-mono text-white flex flex-col items-center justify-center">
-      {/* Logout Button */}
-      <div className="absolute top-8 right-10 z-30 animate-fade-in">
-        <button
-          onClick={handleLogout}
-          className="px-6 py-2 bg-gradient-to-r from-gray-700 to-gray-900 text-white rounded-xl font-bold text-lg shadow-lg hover:from-gray-900 hover:to-black transition-all duration-200 border border-gray-400/30"
-        >
-          Logout
-        </button>
-      </div>
-      
+    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col relative overflow-hidden">
+      <Toaster position="top-right" reverseOrder={false} />
+      <DashboardHeader portalTitle="Doctor Portal" roleBadge="Doctor" />
 
-      {/* Buffing Animation */}
-      {loading ? (
-        <div className="flex flex-col items-center justify-center h-screen">
-          <div className="animate-spin rounded-full h-20 w-20 border-t-4 border-b-4 border-teal-400 mb-6"></div>
-          <div className="text-xl text-teal-300 font-bold animate-pulse">Loading Doctor Dashboard...</div>
-        </div>
-      ) : (
-        <div className="w-full max-w-2xl bg-gray-900/90 p-10 rounded-3xl shadow-2xl flex flex-col items-center animate-fade-in-up border border-teal-400/30">
-          <h2 className="text-4xl font-extrabold text-center text-teal-400 mb-6 drop-shadow animate-bounce">
-            Doctor Dashboard
-          </h2>
-          {doctorDetails && (
-            <p className="text-2xl mb-12 animate-fade-in">
-              Welcome{" "}
-              <span className="font-bold text-yellow-400 drop-shadow-lg">
-                {doctorDetails[1]}!
-              </span>
-            </p>
-          )}
-          {error && (
-            <div className="text-red-500 mb-4">{error}</div>
-          )}
-          <div className="flex flex-col sm:flex-row gap-6 w-full justify-center">
-            <button
-              onClick={viewDoctorProfile}
-              className="flex-1 px-8 py-4 bg-gradient-to-r from-teal-500 to-blue-500 text-white rounded-xl font-bold text-lg shadow-lg hover:scale-105 hover:from-teal-600 hover:to-blue-600 transition-all duration-300 animate-pulse"
-            >
-              View Profile
-            </button>
-            <button
-              onClick={viewPatientList}
-              className="flex-1 px-8 py-4 bg-gradient-to-r from-pink-500 to-yellow-400 text-white rounded-xl font-bold text-lg shadow-lg hover:scale-105 hover:from-pink-600 hover:to-yellow-500 transition-all duration-300 animate-pulse"
-            >
-              View Patient List
-            </button>
+      {/* Ambient glow */}
+      <div className="absolute inset-0 pointer-events-none -z-10">
+        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[40rem] h-[22rem] bg-blue-500/10 rounded-full blur-3xl" />
+      </div>
+
+      <main className="flex-1 max-w-4xl w-full mx-auto px-4 sm:px-8 py-12 flex flex-col items-center">
+        {loading ? (
+          <div className="py-24 flex flex-col items-center justify-center gap-4 text-teal-400">
+            <div className="w-12 h-12 border-3 border-teal-400 border-t-transparent rounded-full animate-spin" />
+            <p className="text-sm font-semibold text-slate-300">Synchronizing Practitioner Session...</p>
           </div>
-        </div>
-      )}
+        ) : (
+          <div className="w-full flex flex-col items-center">
+            {/* Header / Intro */}
+            <div className="text-center mb-10">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 text-blue-400 text-xs font-semibold mb-3 border border-blue-500/20">
+                <span>👨‍⚕️ Licensed Medical Practitioner</span>
+                <span>•</span>
+                <span className="font-mono">HH #{hhNumber}</span>
+              </div>
+
+              <h1 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
+                Welcome,{" "}
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-teal-400 to-blue-400">
+                  {doctorDetails?._doctorName || doctorDetails?.[1] || "Doctor"}
+                </span>
+              </h1>
+              <p className="text-sm text-slate-400 mt-2 max-w-md mx-auto">
+                {doctorDetails?._hospitalName || doctorDetails?.[2] || "Clinical Facility"} • Access authorized patient charts, review medical histories, and issue prescriptions.
+              </p>
+            </div>
+
+            {error && (
+              <div className="w-full p-4 mb-6 rounded-2xl bg-red-900/30 border border-red-500/40 text-red-200 text-sm text-center">
+                {error}
+              </div>
+            )}
+
+            {/* Action Grid */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 w-full max-w-2xl">
+              <button
+                onClick={() => navigate(`/doctor/${hhNumber}/viewdoctorprofile`)}
+                className="group p-8 rounded-3xl bg-slate-900/90 border border-slate-800 hover:border-teal-500/50 hover:bg-slate-850 transition-all duration-300 shadow-xl flex flex-col items-start text-left hover:-translate-y-1 focus-visible:ring-2 focus-visible:ring-teal-400"
+              >
+                <span className="p-3.5 rounded-2xl bg-teal-500/10 text-2xl mb-4 border border-teal-500/20 group-hover:scale-110 transition-transform">
+                  👨‍⚕️
+                </span>
+                <h3 className="text-xl font-bold text-white group-hover:text-teal-300 transition-colors">
+                  Practitioner Profile
+                </h3>
+                <p className="text-xs text-slate-400 mt-2 leading-relaxed">
+                  Review your blockchain medical credentials, specialization, affiliated hospital, and department records.
+                </p>
+                <div className="mt-6 flex items-center gap-1.5 text-xs font-semibold text-teal-400 group-hover:translate-x-1 transition-transform">
+                  <span>View Details</span>
+                  <span>→</span>
+                </div>
+              </button>
+
+              <button
+                onClick={() => navigate(`/doctor/${hhNumber}/patientlist`)}
+                className="group p-8 rounded-3xl bg-slate-900/90 border border-slate-800 hover:border-cyan-500/50 hover:bg-slate-850 transition-all duration-300 shadow-xl flex flex-col items-start text-left hover:-translate-y-1 focus-visible:ring-2 focus-visible:ring-cyan-400"
+              >
+                <span className="p-3.5 rounded-2xl bg-cyan-500/10 text-2xl mb-4 border border-cyan-500/20 group-hover:scale-110 transition-transform">
+                  📋
+                </span>
+                <h3 className="text-xl font-bold text-white group-hover:text-cyan-300 transition-colors">
+                  Patient Roster
+                </h3>
+                <p className="text-xs text-slate-400 mt-2 leading-relaxed">
+                  Look up registered patients, verify active consent permissions, inspect diagnostic reports, and issue digital prescriptions.
+                </p>
+                <div className="mt-6 flex items-center gap-1.5 text-xs font-semibold text-cyan-400 group-hover:translate-x-1 transition-transform">
+                  <span>Open Roster</span>
+                  <span>→</span>
+                </div>
+              </button>
+            </div>
+          </div>
+        )}
+      </main>
     </div>
   );
 };

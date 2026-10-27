@@ -1,55 +1,87 @@
-import React from 'react'
-import Nav_bar from './Nav_bar'
+import React from 'react';
+import Nav_bar from './Nav_bar';
 
 const About = () => {
   return (
-    
-    <div className="relative min-h-screen bg-gradient-to-br from-blue-900 via-purple-900 to-pink-700 flex flex-col items-center justify-center px-4 py-16 animate-fade-in">
-      <Nav_bar/>
-      <div className="absolute inset-0 z-0 opacity-60 blur-2xl pointer-events-none">
-        <svg width="100%" height="100%" viewBox="0 0 1440 800" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <circle cx="1200" cy="200" r="300" fill="#38bdf8" fillOpacity="0.2" />
-          <circle cx="300" cy="600" r="250" fill="#a78bfa" fillOpacity="0.2" />
-        </svg>
+    <div className="relative min-h-screen bg-slate-950 text-slate-100 flex flex-col items-center justify-center px-4 py-24 overflow-hidden">
+      <Nav_bar />
+
+      {/* Ambient background glow */}
+      <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
+        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-teal-500/15 rounded-full blur-3xl animate-pulse" />
+        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-blue-500/15 rounded-full blur-3xl" />
       </div>
-      <div className="relative z-10 max-w-3xl w-full bg-white/20 backdrop-blur-lg rounded-3xl shadow-2xl p-10 flex flex-col items-center border border-white/30 animate-fade-in-up">
-        <h1 className="text-4xl font-extrabold text-white mb-4 drop-shadow-lg animate-bounce">About HealthRecords dApp</h1>
-        <p className="text-lg text-white/90 mb-8 text-center animate-fade-in">
-          HealthRecords is a next-generation decentralized healthcare record management system. We empower patients, doctors, and diagnostic centers to securely access, share, and manage medical records using blockchain and IPFS technology.
+
+      <div className="relative z-10 max-w-4xl w-full bg-slate-900/85 backdrop-blur-xl rounded-3xl shadow-2xl p-8 sm:p-12 flex flex-col items-center border border-slate-800">
+        <span className="text-4xl mb-3">🩺</span>
+        <h1 className="text-3xl sm:text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-teal-400 via-cyan-300 to-blue-400 mb-4 text-center">
+          About ArogyaBridge
+        </h1>
+        <p className="text-base sm:text-lg text-slate-300 mb-10 text-center max-w-2xl leading-relaxed">
+          ArogyaBridge is an enterprise-grade decentralized electronic health record (EHR) management system.
+          We empower patients, licensed practitioners, and diagnostic laboratories to securely share, access,
+          and verify health records using Ethereum smart contracts and distributed IPFS storage.
         </p>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full mb-8">
-          <div className="flex flex-col items-center bg-white/30 rounded-xl p-6 shadow-md animate-fade-in-up">
-            <span className="text-3xl mb-2 animate-spin">🔒</span>
-            <span className="font-bold text-white">Privacy & Security</span>
-            <span className="text-sm text-white/80 text-center mt-2">Your health data is encrypted, decentralized, and only accessible by you and those you trust.</span>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full mb-10">
+          <div className="flex flex-col items-start p-6 rounded-2xl bg-slate-800/60 border border-slate-700/60 hover:border-teal-500/40 transition-all duration-300">
+            <span className="p-3 rounded-xl bg-teal-500/10 text-2xl mb-3 border border-teal-500/20">🔒</span>
+            <h3 className="font-bold text-slate-100 text-lg">Patient-Governed Privacy</h3>
+            <p className="text-sm text-slate-400 mt-1 leading-relaxed">
+              Zero plaintext health credentials on-chain. Patients hold cryptographic sovereignty and can grant or revoke doctor viewing access at any moment.
+            </p>
           </div>
-          <div className="flex flex-col items-center bg-white/30 rounded-xl p-6 shadow-md animate-fade-in-up">
-            <span className="text-3xl mb-2 animate-spin">⚡</span>
-            <span className="font-bold text-white">Instant Access</span>
-            <span className="text-sm text-white/80 text-center mt-2">Access and share your records instantly with healthcare professionals and labs.</span>
+
+          <div className="flex flex-col items-start p-6 rounded-2xl bg-slate-800/60 border border-slate-700/60 hover:border-teal-500/40 transition-all duration-300">
+            <span className="p-3 rounded-xl bg-cyan-500/10 text-2xl mb-3 border border-cyan-500/20">⚡</span>
+            <h3 className="font-bold text-slate-100 text-lg">Instant Record Exchange</h3>
+            <p className="text-sm text-slate-400 mt-1 leading-relaxed">
+              Eliminate paper friction. Access lab diagnostics, clinical prescriptions, and past medical histories instantly through encrypted peer-to-peer pipelines.
+            </p>
           </div>
-          <div className="flex flex-col items-center bg-white/30 rounded-xl p-6 shadow-md animate-fade-in-up">
-            <span className="text-3xl mb-2 animate-spin">🌐</span>
-            <span className="font-bold text-white">Decentralized</span>
-            <span className="text-sm text-white/80 text-center mt-2">Built on blockchain & IPFS for transparency, reliability, and no single point of failure.</span>
+
+          <div className="flex flex-col items-start p-6 rounded-2xl bg-slate-800/60 border border-slate-700/60 hover:border-teal-500/40 transition-all duration-300">
+            <span className="p-3 rounded-xl bg-blue-500/10 text-2xl mb-3 border border-blue-500/20">🌐</span>
+            <h3 className="font-bold text-slate-100 text-lg">Tamper-Proof Audit Trails</h3>
+            <p className="text-sm text-slate-400 mt-1 leading-relaxed">
+              Smart contracts maintain an immutable record of practitioner credentials and diagnostic attestations, ensuring trust and HIPAA/GDPR alignment.
+            </p>
           </div>
-          <div className="flex flex-col items-center bg-white/30 rounded-xl p-6 shadow-md animate-fade-in-up">
-            <span className="text-3xl mb-2 animate-spin">🤝</span>
-            <span className="font-bold text-white">Seamless Collaboration</span>
-            <span className="text-sm text-white/80 text-center mt-2">Doctors, patients, and diagnostic centers collaborate securely and efficiently.</span>
+
+          <div className="flex flex-col items-start p-6 rounded-2xl bg-slate-800/60 border border-slate-700/60 hover:border-teal-500/40 transition-all duration-300">
+            <span className="p-3 rounded-xl bg-purple-500/10 text-2xl mb-3 border border-purple-500/20">🤝</span>
+            <h3 className="font-bold text-slate-100 text-lg">Unified Collaboration</h3>
+            <p className="text-sm text-slate-400 mt-1 leading-relaxed">
+              Connect hospitals, private specialists, and diagnostic centers into a shared interoperable network with zero single point of failure.
+            </p>
           </div>
         </div>
-        <div className="w-full flex flex-col items-center mt-4 animate-fade-in-up">
-          <h2 className="text-2xl font-bold text-white mb-2">Connect With Us</h2>
-          <p className="text-white/80 mb-4 text-center">Have questions or want to join our mission? Reach out to our team!</p>
-          <div className="flex gap-6">
-            <a href="ramanandtomar1234@gmail.com" className="bg-gradient-to-r from-blue-500 to-purple-500 text-white px-6 py-2 rounded-full font-semibold shadow-lg hover:scale-105 transition-all duration-300 animate-pulse">Email Us</a>
-            <a href="https://www.linkedin.com/in/ramanand-tomar-478528342/" target="_blank" rel="noopener noreferrer" className="bg-gradient-to-r from-teal-500 to-blue-500 text-white px-6 py-2 rounded-full font-semibold shadow-lg hover:scale-105 transition-all duration-300 animate-pulse">LinkedIn</a>
+
+        <div className="w-full flex flex-col items-center pt-6 border-t border-slate-800">
+          <h2 className="text-xl font-bold text-slate-200 mb-2">Connect With The Team</h2>
+          <p className="text-slate-400 text-sm mb-5 text-center">
+            Have questions, feedback, or need clinical integration assistance?
+          </p>
+          <div className="flex flex-wrap gap-4 justify-center">
+            <a
+              href="mailto:ramanandtomar1234@gmail.com"
+              className="px-6 py-2.5 rounded-full bg-gradient-to-r from-teal-500 to-blue-600 hover:from-teal-600 hover:to-blue-700 text-white font-semibold text-sm shadow-lg hover:scale-105 transition-all duration-200"
+            >
+              ✉️ Email Us
+            </a>
+            <a
+              href="https://www.linkedin.com/in/ramanand-tomar-478528342/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="px-6 py-2.5 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold text-sm border border-slate-700 hover:scale-105 transition-all duration-200"
+            >
+              LinkedIn Profile ↗
+            </a>
           </div>
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default About
+export default About;

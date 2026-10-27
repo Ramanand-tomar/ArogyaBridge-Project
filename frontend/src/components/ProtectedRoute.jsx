@@ -14,7 +14,7 @@ const ProtectedRoute = ({ children, requiredRole }) => {
   const userJson = localStorage.getItem('arogya_user');
 
   if (!token) {
-    toast.error('Authentication required. Please sign in with your Web3 wallet.');
+    toast.error('Authentication required. Please sign in with your Web3 wallet.', { id: 'auth-required' });
     return <Navigate to="/login" replace />;
   }
 
@@ -22,13 +22,13 @@ const ProtectedRoute = ({ children, requiredRole }) => {
     try {
       const user = JSON.parse(userJson);
       if (user.role && user.role.toLowerCase() !== requiredRole.toLowerCase()) {
-        toast.error(`Access restricted. Requires ${requiredRole} credentials.`);
+        toast.error(`Access restricted. Requires ${requiredRole} credentials.`, { id: 'role-restricted' });
         return <Navigate to="/home" replace />;
       }
 
       // If hhNumber is in route params, verify ownership
       if (hhNumber && user.hhNumber && user.hhNumber !== hhNumber) {
-        toast.error('Identity mismatch. You can only access your own profile dashboard.');
+        toast.error('Identity mismatch. You can only access your own profile dashboard.', { id: 'id-mismatch' });
         return <Navigate to={`/${user.role.toLowerCase()}/${user.hhNumber}`} replace />;
       }
     } catch {
