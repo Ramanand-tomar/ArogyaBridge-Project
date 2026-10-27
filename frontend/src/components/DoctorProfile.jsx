@@ -1,193 +1,121 @@
 import React, { useState, useEffect, useContext } from "react";
-import { Web3Context } from "../context/Web3Context";
 import { useParams, useNavigate } from "react-router-dom";
+import { Web3Context } from "../context/Web3Context";
 import toast, { Toaster } from "react-hot-toast";
-import { generatePrescriptionPdf } from "../assets/generatePrescriptionPdf";
-import { uploadFileToIPFS } from "../assets/uploadToPinata";
 
-const DoctorPrecription = () => {
-  const backend_url = import.meta.env.VITE_BACKEND_URL;
-
-  const { web3, contract, account } = useContext(Web3Context);
-  const { hhNumber, patient_Number } = useParams();
+const DoctorProfile = () => {
+  const { account, contract } = useContext(Web3Context);
+  const { hhNumber } = useParams();
   const navigate = useNavigate();
-  const [doctorContract, setDoctorContract] = useState(null);
+
   const [doctorDetails, setDoctorDetails] = useState(null);
-  const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
-  const [submitting, setSubmitting] = useState(false);
-  const [success, setSuccess] = useState("");
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    const init = async () => {
-      if (!web3 || !contract || !hhNumber) {
-        setError("Web3 or contract not loaded or hhNumber is missing.");
+    const fetchDoctorProfile = async () => {
+      if (!contract || !contract.doctor || !hhNumber) {
+        setError("Smart contract not loaded or Doctor ID is missing.");
         setLoading(false);
         return;
       }
       try {
-        setDoctorContract(contract.doctor);
-        const result = await contract.doctor.methods
-          .getDoctorDetails(hhNumber)
-          .call();
-        setDoctorDetails({
-          name: result[1],
-          specialization: result[6],
-          email: result[5],
-          hospital: result[2],
-        });
+        setLoading(true);
+        const details = await contract.doctor.methods.getDoctorDetails(hhNumber).call();
+        setDoctorDetails(details);
         setError(null);
-      } catch (error) {
-        setError("Error retrieving doctor details");
+      } catch (err) {
+        console.error("Failed to load doctor profile:", err);
+        setError("Failed to load doctor profile from blockchain.");
       } finally {
         setLoading(false);
       }
     };
-    init();
-  }, [web3, contract, hhNumber]);
 
-  const handleCancel = () => {
-    navigate(`/doctor/${hhNumber}/doctorviewpatient/${patient_Number}`);
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setSubmitting(true);
-    setSuccess("");
-    setError(null);
-    
-    try {
-      const date = new Date().toISOString().split("T")[0];
-
-      // 1. First generate the PDF
-      const pdfBytes = await generatePrescriptionPdf({
-        doctorProfile: doctorDetails,
-        patientNumber: patient_Number,
-        title,
-        description,
-        date,
-      });
-
-      // Create a Blob from the PDF bytes
-      const pdfBlob = new Blob([pdfBytes], { type: 'application/pdf' });
-      
-      // Create a File from the Blob
-      const pdfFile = new File([pdfBlob], `Prescription_${patient_Number}_${Date.now()}.pdf`, {
-        type: 'application/pdf'
-      });
-
-      // 2. Upload the PDF to IPFS using your Pinata function
-      const ipfsHash = await uploadFileToIPFS(pdfFile);
-      
-      if (!ipfsHash) {
-        throw new Error("Failed to upload PDF to IPFS - no hash returned");
-      }
-
-      toast.success(`PDF uploaded to IPFS ✅`);
-      console.log("IPFS Hash:", ipfsHash);
-
-      // 3. Save prescription data to MongoDB with IPFS hash
-      const prescriptionData = {
-        patientNumber: patient_Number,
-        doctorNumber: hhNumber,
-        title,
-        description,
-        date,
-        ipfsHash,
-        fileName: pdfFile.name
-      };
-
-      const response = await fetch(`${backend_url}/api/prescriptions`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(prescriptionData),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || "Failed to store prescription");
-      }
-
-      toast.success("Prescription submitted successfully!");
-      setSuccess("Prescription created and stored successfully!");
-
-      // Reset form
-      setTitle("");
-      setDescription("");
-
-      // Navigate after a short delay
-      setTimeout(() => {
-        navigate(`/doctor/${hhNumber}/doctorviewpatient/${patient_Number}`);
-      }, 1500);
-
-    } catch (err) {
-      console.error("Error submitting prescription:", err);
-      setError(err.message || "Failed to submit prescription");
-      toast.error(err.message || "Failed to submit prescription");
-    } finally {
-      setSubmitting(false);
-    }
-  };
+    fetchDoctorProfile();
+  }, [contract, hhNumber]);
 
   return (
-    <div className="bg-gradient-to-b from-black to-gray-800 p-4 sm:p-10 font-mono text-white flex flex-col justify-center items-center min-h-screen">
+    <div className="bg-gradient-to-b from-black to-gray-800 min-h-screen flex flex-col justify-center items-center p-4 font-mono text-white relative">
       <Toaster position="top-right" reverseOrder={false} />
-      <div className="w-full max-w-2xl bg-gray-900 bg-opacity-80 backdrop-blur-lg p-10 rounded-3xl shadow-2xl flex flex-col items-center animate-fade-in">
-        <h1 className="text-3xl sm:text-4xl font-bold mb-6">
-          Doctor Prescription
-        </h1>
-        {doctorDetails && (
-          <p className="text-xl sm:text-2xl mb-4">
-            Welcome, Dr. {doctorDetails.name}!
+
+      <div className="w-full max-w-2xl bg-gray-900/90 backdrop-blur-xl p-8 sm:p-12 rounded-3xl shadow-2xl border border-teal-500/30">
+        <button
+          onClick={() => navigate(`/doctor/${hhNumber}`)}
+          className="mb-6 px-5 py-2 bg-gradient-to-r from-teal-500 to-blue-500 text-white font-bold rounded-xl shadow hover:from-teal-600 hover:to-blue-600 transition"
+        >
+          ← Back to Dashboard
+        </button>
+
+        <div className="flex flex-col items-center mb-8">
+          <div className="w-24 h-24 rounded-full bg-gradient-to-tr from-teal-500 to-blue-600 flex items-center justify-center text-4xl shadow-lg mb-4">
+            👨‍⚕️
+          </div>
+          <h1 className="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-teal-400 to-blue-400">
+            Doctor Profile
+          </h1>
+          <p className="text-xs text-gray-400 mt-1 font-mono">
+            Verified Healthcare Practitioner Credentials
           </p>
-        )}
-        <form onSubmit={handleSubmit} className="w-full max-w-lg space-y-6">
-          <div>
-            <label className="block font-bold mb-2">Prescription Title</label>
-            <input
-              type="text"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              className="w-full p-3 rounded bg-gray-800 border border-gray-600 text-white focus:outline-none focus:ring-2 focus:ring-teal-400"
-              required
-            />
+        </div>
+
+        {loading ? (
+          <div className="text-teal-300 text-center py-8 flex justify-center items-center gap-3">
+            <div className="animate-spin rounded-full h-6 w-6 border-2 border-teal-400 border-t-transparent"></div>
+            Loading credentials from blockchain...
           </div>
-          <div>
-            <label className="block font-bold mb-2">Description / Notes</label>
-            <textarea
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              className="w-full p-3 rounded bg-gray-800 border border-gray-600 text-white focus:outline-none focus:ring-2 focus:ring-teal-400"
-              rows={4}
-              required
-            />
+        ) : error ? (
+          <div className="p-4 bg-red-900/40 border border-red-500/50 rounded-xl text-red-200 text-sm mb-6">
+            {error}
           </div>
-          <div className="flex gap-4 mt-4">
-            <button
-              type="submit"
-              disabled={submitting}
-              className="flex-1 px-6 py-3 bg-green-500 hover:bg-green-600 rounded-lg font-bold text-white transition-all duration-150 shadow disabled:opacity-60"
-            >
-              {submitting ? "Submitting..." : "Submit Prescription"}
-            </button>
-            <button
-              type="button"
-              onClick={handleCancel}
-              className="flex-1 px-6 py-3 bg-red-500 hover:bg-red-600 rounded-lg font-bold text-white transition-all duration-150 shadow"
-            >
-              Cancel
-            </button>
+        ) : doctorDetails ? (
+          <div className="space-y-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-gray-800/50 p-6 rounded-2xl border border-gray-700 text-sm">
+              <div>
+                <span className="text-gray-400 text-xs font-semibold uppercase">Doctor Name</span>
+                <p className="text-lg font-bold text-yellow-400">{doctorDetails._doctorName || doctorDetails[1]}</p>
+              </div>
+              <div>
+                <span className="text-gray-400 text-xs font-semibold uppercase">Hospital / Clinic</span>
+                <p className="text-base text-white">{doctorDetails._hospitalName || doctorDetails[2]}</p>
+              </div>
+              <div>
+                <span className="text-gray-400 text-xs font-semibold uppercase">Specialization</span>
+                <p className="text-base text-teal-300 font-semibold">{doctorDetails._specialization || doctorDetails[6]}</p>
+              </div>
+              <div>
+                <span className="text-gray-400 text-xs font-semibold uppercase">Department</span>
+                <p className="text-base text-white">{doctorDetails._department || doctorDetails[7]}</p>
+              </div>
+              <div>
+                <span className="text-gray-400 text-xs font-semibold uppercase">Designation</span>
+                <p className="text-base text-white">{doctorDetails._designation || doctorDetails[8]}</p>
+              </div>
+              <div>
+                <span className="text-gray-400 text-xs font-semibold uppercase">Work Experience</span>
+                <p className="text-base text-white">{doctorDetails._workExperience || doctorDetails[9]}</p>
+              </div>
+              <div>
+                <span className="text-gray-400 text-xs font-semibold uppercase">Doctor HH Number</span>
+                <p className="text-base font-bold text-yellow-400 font-mono">{hhNumber}</p>
+              </div>
+              <div>
+                <span className="text-gray-400 text-xs font-semibold uppercase">Contact Email</span>
+                <p className="text-base text-teal-300">{doctorDetails._email || doctorDetails[5]}</p>
+              </div>
+            </div>
+
+            <div className="p-4 bg-gray-800/30 rounded-2xl border border-gray-700/60 text-xs text-gray-400 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
+              <span>Registered Wallet Address:</span>
+              <span className="font-mono text-teal-400 break-all">
+                {doctorDetails._walletAddress || doctorDetails[0]}
+              </span>
+            </div>
           </div>
-          {success && (
-            <p className="text-green-400 font-bold mt-4">{success}</p>
-          )}
-          {error && <p className="text-red-400 font-bold mt-4">{error}</p>}
-        </form>
+        ) : null}
       </div>
     </div>
   );
 };
 
-export default DoctorPrecription;
+export default DoctorProfile;

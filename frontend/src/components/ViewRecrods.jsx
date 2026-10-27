@@ -1,12 +1,9 @@
 import React, { useState, useEffect } from "react";
-import toast , { Toaster } from "react-hot-toast";
+import toast, { Toaster } from "react-hot-toast";
 import { useParams, useNavigate } from "react-router-dom";
 
-
-
-
 function ViewRecords() {
-  const Backend_URL = import.meta.env.VITE_BACKEND_URL ;
+  const Backend_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
 
   const navigate = useNavigate();
   const { hhNumber } = useParams();
@@ -18,16 +15,18 @@ function ViewRecords() {
     const fetchRecords = async () => {
       try {
         setLoading(true);
-        const response = await fetch(`${Backend_URL}/api/records/${hhNumber}`);
+        const token = localStorage.getItem("arogya_auth_token");
+        const headers = { "Content-Type": "application/json" };
+        if (token) headers["Authorization"] = `Bearer ${token}`;
+
+        const response = await fetch(`${Backend_URL}/api/records/${hhNumber}`, { headers });
         if (!response.ok) throw new Error("Failed to fetch records");
         const data = await response.json();
-        setRecords(data);
-        toast.success("Records retrieved successfully!");
+        setRecords(data || []);
         setError(null);
       } catch (err) {
-        setError("Error retrieving patient records");
-        toast.error("Failed to fetch records.");
-        console.error(err);
+        console.error("Error retrieving patient records:", err);
+        setError("Error retrieving patient records from server.");
         setRecords([]);
       } finally {
         setLoading(false);
@@ -40,91 +39,72 @@ function ViewRecords() {
     navigate("/patient/" + hhNumber);
   };
 
+  const handleOpenDocument = (ipfsHash) => {
+    window.open(`https://ipfs.io/ipfs/${ipfsHash}`, "_blank");
+  };
+
   return (
     <div className="bg-gradient-to-b from-black to-gray-800 min-h-screen flex flex-col justify-center items-center p-4 font-mono text-white">
       <Toaster position="top-right" reverseOrder={false} />
-      <div className="w-full max-w-3xl bg-gray-900 p-10 rounded-2xl shadow-2xl flex flex-col items-center animate-fade-in">
-        <div className="flex flex-col items-center mb-8">
-          <span className="bg-teal-600 rounded-full p-4 mb-2 shadow-lg">
+      <div className="w-full max-w-3xl bg-gray-900/90 backdrop-blur-xl p-8 sm:p-10 rounded-3xl shadow-2xl flex flex-col items-center border border-teal-500/30">
+        <button
+          onClick={cancelOperation}
+          className="mb-6 self-start px-5 py-2 bg-gradient-to-r from-teal-500 to-blue-500 text-white font-bold rounded-xl shadow hover:from-teal-600 hover:to-blue-600 transition"
+        >
+          ← Back to Dashboard
+        </button>
+
+        <div className="flex flex-col items-center mb-6">
+          <span className="bg-teal-600/80 rounded-2xl p-4 mb-3 shadow-lg">
             <svg className="h-10 w-10 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 17v-6a2 2 0 012-2h2a2 2 0 012 2v6m-6 0h6" />
             </svg>
           </span>
-          <h1 className="text-3xl sm:text-4xl font-bold mb-2">Patient Records</h1>
-          <p className="text-teal-200 text-center text-sm">View and access your uploaded medical documents securely.</p>
+          <h1 className="text-3xl font-extrabold mb-1 text-transparent bg-clip-text bg-gradient-to-r from-teal-400 to-blue-400">
+            Uploaded Health Documents
+          </h1>
+          <p className="text-gray-400 text-xs">
+            Decentralized IPFS Storage for Patient: <span className="text-yellow-400 font-bold">{hhNumber}</span>
+          </p>
         </div>
+
         {loading ? (
-          <div className="text-teal-300 text-lg font-semibold flex items-center gap-2 mb-6">
-            <svg className="animate-spin h-6 w-6" fill="none" viewBox="0 0 24 24">
-              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"></path>
-            </svg>
-            Loading records...
+          <div className="text-teal-300 text-sm font-semibold flex items-center gap-3 my-8">
+            <div className="animate-spin rounded-full h-6 w-6 border-2 border-teal-400 border-t-transparent"></div>
+            Retrieving documents from IPFS network...
           </div>
         ) : error ? (
-          <p className="text-red-500 text-lg font-semibold mb-4 flex items-center gap-2">
-            <span>⚠️</span>
+          <div className="p-4 bg-red-900/40 border border-red-500/50 rounded-xl text-red-200 text-sm mb-6 w-full text-center">
             {error}
-          </p>
+          </div>
         ) : records.length > 0 ? (
-          <ul className="space-y-6 w-full">
+          <ul className="space-y-4 w-full">
             {records.map((record, index) => (
               <li
                 key={index}
-                className="bg-gradient-to-r from-gray-800 to-gray-900 p-6 rounded-xl shadow-lg flex flex-col sm:flex-row sm:items-center gap-4 hover:scale-[1.02] transition-transform duration-200 border border-teal-500"
+                className="bg-gray-800/70 border border-gray-700/80 p-5 rounded-2xl flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 hover:border-teal-500/50 transition"
               >
-                <div className="flex items-center gap-3">
-                  <span className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-teal-600 text-white text-xl shadow-md">
-                    <svg xmlns='http://www.w3.org/2000/svg' className='h-6 w-6' fill='none' viewBox='0 0 24 24' stroke='currentColor'>
-                      <path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M9 17v-6a2 2 0 012-2h2a2 2 0 012 2v6m-6 0h6' />
-                    </svg>
-                  </span>
-                  <div>
-                    <span className="bg-teal-500 text-white text-xs font-bold px-2 py-1 rounded mr-2">#{index + 1}</span>
-                    <span className="font-semibold text-lg text-teal-200">{record.fileName || 'Document'}</span>
-                  </div>
+                <div>
+                  <h3 className="font-bold text-base text-white">{record.fileName || "Medical Record"}</h3>
+                  <p className="text-xs text-gray-400 font-mono mt-1 break-all">CID: {record.ipfsHash}</p>
+                  <p className="text-xs text-teal-400 mt-1">
+                    Uploaded: {record.uploadedAt ? new Date(record.uploadedAt).toLocaleString() : "Recorded"}
+                  </p>
                 </div>
-                <div className="flex-1 flex flex-col sm:flex-row sm:items-center gap-2 mt-2 sm:mt-0">
-                  <span className="bg-gray-600 text-gray-100 text-xs px-2 py-1 rounded-full mr-2">
-                    {record.uploadedAt ? new Date(record.uploadedAt).toLocaleDateString() : 'Unknown Date'}
-                  </span>
-                  {record.ipfsHash && (
-                    <a
-                      href={`https://ipfs.io/ipfs/${record.ipfsHash}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-center gap-1 text-blue-400 underline hover:text-blue-300 transition-colors duration-150 font-medium"
-                    >
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.172 7l-6.586 6.586a2 2 0 002.828 2.828l6.586-6.586a2 2 0 00-2.828-2.828z" />
-                      </svg>
-                      View Uploaded File
-                    </a>
-                  )}
-                </div>
+                <button
+                  onClick={() => handleOpenDocument(record.ipfsHash)}
+                  className="px-4 py-2 bg-gradient-to-r from-teal-500 to-blue-600 hover:from-teal-600 hover:to-blue-700 text-white rounded-xl text-xs font-bold transition shadow"
+                >
+                  View on IPFS ↗
+                </button>
               </li>
             ))}
           </ul>
         ) : (
-          <p className="text-gray-300 text-lg font-medium">No records found.</p>
+          <div className="p-8 text-center text-gray-400 bg-gray-800/40 rounded-2xl w-full border border-gray-700">
+            No medical documents found. You can upload records from your patient dashboard.
+          </div>
         )}
-        <button
-          onClick={cancelOperation}
-          className="mt-8 px-6 py-3 bg-gradient-to-r from-blue-600 to-teal-500 text-white rounded-xl font-bold shadow-lg hover:from-blue-700 hover:to-teal-600 transition-all duration-200 text-lg"
-        >
-          ← Back to Dashboard
-        </button>
-      </div>
-      <div className="mt-6 text-center">
-        <p className="text-lg">
-          If you want to upload your past records, please click{' '}
-          <span
-            className="text-blue-500 cursor-pointer hover:underline"
-            onClick={() => navigate(`/patient/${hhNumber}/uploadrecords`)}
-          >
-            here
-          </span>
-        </p>
       </div>
     </div>
   );

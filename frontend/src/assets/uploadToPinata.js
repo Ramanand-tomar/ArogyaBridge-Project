@@ -1,33 +1,44 @@
 import axios from 'axios';
 
-// Set your Pinata JWT here (never commit secrets in production)
-const PINATA_JWT = import.meta.env.VITE_PINATA_JWT;
-
-if (!PINATA_JWT) {
-  throw new Error('Pinata JWT is not set. Please set VITE_PINATA_JWT in your .env file.');
-}
-
+/**
+ * Upload a file to IPFS via the secure ArogyaBridge Backend Proxy.
+ * This guarantees the Pinata JWT master credentials are NEVER exposed to the client-side browser bundle.
+ *
+ * @param {File} file - The file to upload
+ * @returns {Promise<string>} The IPFS CID hash
+ */
 export const uploadFileToIPFS = async (file) => {
-
   if (!file) {
     throw new Error('No file provided for upload.');
   }
-  const url = `https://api.pinata.cloud/pinning/pinFileToIPFS`;
+
+  const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000';
+  const url = `${backendUrl}/api/upload`;
+
   const formData = new FormData();
   formData.append('file', file);
 
+  const token = localStorage.getItem('arogya_auth_token');
+  const headers = {
+    'Content-Type': 'multipart/form-data',
+  };
+
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`;
+  }
+
   try {
     const response = await axios.post(url, formData, {
-      maxBodyLength: 'Infinity',
-      headers: {
-        'Content-Type': 'multipart/form-data',
-        Authorization: `Bearer ${PINATA_JWT}`,
-      },
+      headers,
     });
 
-    return response.data.IpfsHash; // returns the CID
+    if (!response.data || !response.data.ipfsHash) {
+      throw new Error('Backend failed to return IPFS hash');
+    }
+
+    return response.data.ipfsHash; // returns the IPFS CID
   } catch (error) {
-    console.error('Pinata Upload Error:', error);
-    alert('Failed to upload file to Pinata.');
+    console.error('IPFS Upload Error via backend proxy:', error.response?.data || error.message);
+    throw new Error(error.response?.data?.error || 'Failed to upload file to IPFS. Please verify server connection.');
   }
 };

@@ -2,18 +2,15 @@ import React, { useState, useEffect, useContext } from 'react';
 import { Web3Context } from '../context/Web3Context';
 import { useParams, useNavigate } from 'react-router-dom';
 import { uploadFileToIPFS } from '../assets/uploadToPinata';
-import toast, {Toaster} from 'react-hot-toast';
-
-
+import toast, { Toaster } from 'react-hot-toast';
 
 const DiagnosisForm = () => {
+  const backend_url = import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000';
 
-  const backend_url = import.meta.env.VITE_BACKEND_URL
-
-
-  const { web3, contract, account } = useContext(Web3Context);
+  const { web3, contract } = useContext(Web3Context);
   const { hhNumber } = useParams(); // diagnosis center's number
   const navigate = useNavigate();
+
   const [diagnosisDetails, setDiagnosisDetails] = useState(null);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -21,31 +18,34 @@ const DiagnosisForm = () => {
   const [description, setDescription] = useState('');
   const [file, setFile] = useState(null);
   const [submitting, setSubmitting] = useState(false);
-  const [success, setSuccess] = useState('');
   const [PatienthhNumber, setPatienthhNumber] = useState('');
 
   useEffect(() => {
     const init = async () => {
-      if (!web3 || !contract || !hhNumber) {
-        setError('Web3 or contract not loaded or hhNumber is missing.');
+      const diagContract = contract?.diagnosis || contract?.diagnostic;
+      if (!diagContract || !hhNumber) {
+        setError('Diagnostic smart contract not loaded or Center ID is missing.');
         setLoading(false);
         return;
       }
       try {
-        const result = await contract.diagnostic.methods.getDiagnosticDetails(hhNumber).call();
+        const result = await diagContract.methods.getDiagnosticDetails(hhNumber).call();
         setDiagnosisDetails(result);
         setError(null);
-      } catch (error) {
-        setError('Error retrieving diagnostic details');
+      } catch (err) {
+        console.error('Error retrieving diagnostic details:', err);
+        setError('Error retrieving diagnostic center details from blockchain.');
       } finally {
         setLoading(false);
       }
     };
     init();
-  }, [web3, contract, hhNumber]);
+  }, [contract, hhNumber]);
 
   const handleFileChange = (e) => {
-    setFile(e.target.files[0]);
+    if (e.target.files && e.target.files[0]) {
+      setFile(e.target.files[0]);
+    }
   };
 
   const handleCancel = () => {
@@ -54,116 +54,162 @@ const DiagnosisForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (!PatienthhNumber || PatienthhNumber.length !== 6) {
+      toast.error('Please enter a valid 6-digit Patient HH Number.');
+      return;
+    }
+
+    if (!title.trim() || !description.trim()) {
+      toast.error('Please enter report title and description.');
+      return;
+    }
+
     setSubmitting(true);
-    setSuccess('');
-    setError(null);
+    const toastId = toast.loading(file ? 'Uploading medical scan to IPFS...' : 'Submitting report...');
+
     try {
       let ipfsHash = '';
       if (file) {
         ipfsHash = await uploadFileToIPFS(file);
+        toast.loading('Saving diagnosis report to database...', { id: toastId });
       }
+
+      const token = localStorage.getItem('arogya_auth_token');
+      const headers = { 'Content-Type': 'application/json' };
+      if (token) headers['Authorization'] = `Bearer ${token}`;
+
       // Send report details to backend
       const response = await fetch(`${backend_url}/api/diagnosis/report`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers,
         body: JSON.stringify({
-          hhNumber:PatienthhNumber,
-          title,
-          description,
-          ipfsHash,
-          date: new Date().toISOString()
-        })
+          hhNumber: PatienthhNumber.trim(),
+          title: title.trim(),
+          description: description.trim(),
+          ipfsHash: ipfsHash || 'N/A',
+          date: new Date().toISOString(),
+        }),
       });
-      if (!response.ok) throw new Error('Failed to save report to backend');
-      toast.success('Report submitted successfully!');
+
+      if (!response.ok) {
+        const errData = await response.json();
+        throw new Error(errData.error || 'Failed to save diagnostic report');
+      }
+
+      toast.dismiss(toastId);
+      toast.success('Diagnostic report uploaded and linked successfully! 🔬');
       setTitle('');
       setPatienthhNumber('');
       setDescription('');
       setFile(null);
-      navigate(`/diagnosis/${hhNumber}`); // Redirect to diagnosis dashboard
+
+      setTimeout(() => {
+        navigate(`/diagnosis/${hhNumber}`);
+      }, 1000);
     } catch (err) {
-      toast.error('Failed to submit report.');
+      console.error('Diagnosis report error:', err);
+      toast.dismiss(toastId);
+      toast.error(err.message || 'Failed to submit diagnostic report.');
     } finally {
       setSubmitting(false);
     }
   };
 
   return (
-    <div className="bg-gradient-to-b from-black to-gray-800 min-h-screen flex flex-col justify-center items-center p-4 font-mono text-white">
+    <div className="bg-gradient-to-b from-black to-gray-800 p-4 sm:p-10 font-mono text-white flex flex-col justify-center items-center min-h-screen">
       <Toaster position="top-right" reverseOrder={false} />
-      <div className="w-full max-w-2xl bg-gray-900 bg-opacity-90 backdrop-blur-lg p-0 rounded-3xl shadow-2xl flex flex-col items-center animate-fade-in">
-        <div className="w-full flex flex-col items-center justify-center bg-gradient-to-tr from-teal-500 to-blue-500 py-8 px-4 rounded-t-3xl">
-          <span className="bg-white rounded-full p-3 shadow-lg mb-2">
-            <svg className="h-10 w-10 text-teal-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 17v-6a2 2 0 012-2h2a2 2 0 012 2v6m-6 0h6" /></svg>
-          </span>
-          <h1 className="text-3xl sm:text-4xl font-extrabold mb-1 text-white drop-shadow">Create Diagnosis Report</h1>
-          {diagnosisDetails && (
-            <p className="text-lg sm:text-xl text-teal-100 mb-2">Welcome, <span className="font-bold text-yellow-200">{diagnosisDetails[1]}</span>!</p>
-          )}
-        </div>
-        <form onSubmit={handleSubmit} className="w-full max-w-lg space-y-7 px-8 py-10">
+      <div className="w-full max-w-2xl bg-gray-900/90 backdrop-blur-xl p-8 sm:p-10 rounded-3xl shadow-2xl flex flex-col items-center border border-teal-500/30">
+        <h1 className="text-3xl font-extrabold mb-2 text-transparent bg-clip-text bg-gradient-to-r from-teal-400 to-blue-400">
+          Upload Diagnostic Lab Report
+        </h1>
+        <p className="text-xs text-gray-400 mb-6 text-center">
+          Diagnostic Center ID: <span className="text-teal-400 font-bold">{hhNumber}</span>
+        </p>
+
+        {diagnosisDetails && (
+          <div className="w-full p-4 bg-gray-800/50 rounded-2xl border border-gray-700 mb-6 text-sm flex justify-between items-center">
+            <div>
+              <span className="text-gray-400 text-xs">Diagnostic Center:</span>
+              <p className="font-bold text-yellow-300">{diagnosisDetails._diagnosticName || diagnosisDetails[1]}</p>
+            </div>
+            <div className="text-right">
+              <span className="text-gray-400 text-xs">Facility Location:</span>
+              <p className="text-gray-200">{diagnosisDetails._diagnosticLocation || diagnosisDetails[3]}</p>
+            </div>
+          </div>
+        )}
+
+        {error && (
+          <div className="p-4 bg-red-900/40 border border-red-500/50 rounded-xl text-red-200 text-sm mb-4 w-full">
+            {error}
+          </div>
+        )}
+
+        <form onSubmit={handleSubmit} className="w-full space-y-5">
           <div>
-            <label className="block font-bold mb-2 text-teal-300">Report Title</label>
+            <label className="block text-sm font-semibold text-gray-300 mb-2">Patient HH Number (6 Digits) *</label>
+            <input
+              type="text"
+              maxLength={6}
+              value={PatienthhNumber}
+              onChange={(e) => setPatienthhNumber(e.target.value)}
+              placeholder="e.g. 100001"
+              className="w-full p-3 rounded-xl bg-gray-800 border border-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-teal-400"
+              required
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-semibold text-gray-300 mb-2">Test / Report Title *</label>
             <input
               type="text"
               value={title}
-              onChange={e => setTitle(e.target.value)}
-              className="w-full p-3 rounded-lg bg-gray-800 border border-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-teal-400 transition"
+              onChange={(e) => setTitle(e.target.value)}
+              placeholder="e.g. Complete Blood Count (CBC) & Metabolic Panel"
+              className="w-full p-3 rounded-xl bg-gray-800 border border-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-teal-400"
               required
             />
           </div>
+
           <div>
-            <label className="block font-bold mb-2 text-teal-300">Enter Patient hhNumber : </label>
-            <input
-              type="text"
-              value={PatienthhNumber}
-              onChange={e => setPatienthhNumber(e.target.value)}
-              className="w-full p-3 rounded-lg bg-gray-800 border border-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-teal-400 transition"
-              required
-            />
-          </div>
-          <div>
-            <label className="block font-bold mb-2 text-teal-300">Description / Findings</label>
+            <label className="block text-sm font-semibold text-gray-300 mb-2">Clinical Findings & Remarks *</label>
             <textarea
-              value={description}
-              onChange={e => setDescription(e.target.value)}
-              className="w-full p-3 rounded-lg bg-gray-800 border border-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-teal-400 transition"
               rows={4}
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              placeholder="Enter summary of lab findings, reference ranges, and observations"
+              className="w-full p-3 rounded-xl bg-gray-800 border border-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-teal-400"
               required
             />
           </div>
+
           <div>
-            <label className="block font-bold mb-2 text-teal-300">Upload Report File</label>
+            <label className="block text-sm font-semibold text-gray-300 mb-2">Attach Lab Scan / Document (PDF, Image)</label>
             <input
               type="file"
               onChange={handleFileChange}
-              className="w-full text-white bg-gray-800 border border-gray-700 rounded-lg p-2 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-teal-500 file:text-white hover:file:bg-teal-600 transition"
-              required
+              className="w-full p-3 rounded-xl bg-gray-800 border border-gray-700 text-gray-300 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-teal-500 file:text-white hover:file:bg-teal-600"
             />
-            {file && (
-              <div className="mt-2 text-teal-200 text-sm font-medium animate-fade-in">
-                Selected: <span className="font-semibold">{file.name}</span>
-              </div>
-            )}
+            {file && <p className="text-xs text-teal-300 mt-1 font-mono">Selected: {file.name}</p>}
           </div>
-          <div className="flex gap-4 mt-4">
+
+          <div className="flex gap-4 pt-2">
             <button
               type="submit"
               disabled={submitting}
-              className="flex-1 px-6 py-3 bg-gradient-to-r from-green-500 to-teal-500 hover:from-green-600 hover:to-teal-600 rounded-xl font-bold text-white transition-all duration-150 shadow disabled:opacity-60"
+              className="flex-1 py-3 px-6 bg-gradient-to-r from-teal-500 to-blue-600 hover:from-teal-600 hover:to-blue-700 text-white font-bold rounded-xl shadow-lg transition duration-200 disabled:opacity-50"
             >
-              {submitting ? 'Submitting...' : 'Submit Report'}
+              {submitting ? 'Submitting...' : 'Upload & Pin Report'}
             </button>
             <button
               type="button"
               onClick={handleCancel}
-              className="flex-1 px-6 py-3 bg-gradient-to-r from-red-500 to-pink-500 hover:from-red-600 hover:to-pink-600 rounded-xl font-bold text-white transition-all duration-150 shadow"
+              className="py-3 px-6 bg-gray-800 hover:bg-gray-700 text-gray-300 font-bold rounded-xl border border-gray-700 transition"
             >
               Cancel
             </button>
           </div>
-          {success && <p className="text-green-400 font-bold mt-4 animate-fade-in">{success}</p>}
-          {error && <p className="text-red-400 font-bold mt-4 animate-fade-in">{error}</p>}
         </form>
       </div>
     </div>

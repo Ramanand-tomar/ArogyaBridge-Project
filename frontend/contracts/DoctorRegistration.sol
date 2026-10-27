@@ -1,6 +1,11 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.19;
 
+/**
+ * @title DoctorRegistration
+ * @dev Manages doctor profiles and verification on-chain.
+ * Plaintext passwords and insecure validation removed.
+ */
 contract DoctorRegistration {
     struct Doctor {
         address walletAddress;
@@ -14,22 +19,19 @@ contract DoctorRegistration {
         string department;
         string designation;
         string workExperience;
-        string password;
-    }
-
-    struct PatientList{
-        string patient_number;
-        string patient_name;
     }
 
     mapping(string => address) private doctorAddresses;
     mapping(string => Doctor) private doctors;
-    mapping(string => PatientList[]) private Dpermission;
-    mapping(string => mapping(string => bool)) public doctorPermissions;
+    mapping(address => string) public walletToDoctorHH;
 
     string[] public allDoctorHHNumbers;
 
-    event DoctorRegistered(string hhNumber, string doctorName, address walletAddress);
+    event DoctorRegistered(
+        string indexed hhNumber,
+        string doctorName,
+        address indexed walletAddress
+    );
 
     function registerDoctor(
         string memory _doctorName,
@@ -41,8 +43,7 @@ contract DoctorRegistration {
         string memory _specialization,
         string memory _department,
         string memory _designation,
-        string memory _workExperience,
-        string memory _password
+        string memory _workExperience
     ) external {
         require(doctorAddresses[_hhNumber] == address(0), "Doctor already registered");
 
@@ -57,32 +58,35 @@ contract DoctorRegistration {
             specialization: _specialization,
             department: _department,
             designation: _designation,
-            workExperience: _workExperience,
-            password: _password
+            workExperience: _workExperience
         });
 
         doctors[_hhNumber] = newDoctor;
         doctorAddresses[_hhNumber] = msg.sender;
+        walletToDoctorHH[msg.sender] = _hhNumber;
         allDoctorHHNumbers.push(_hhNumber);
+
         emit DoctorRegistered(_hhNumber, _doctorName, msg.sender);
     }
 
-
-    function getAllDoctors() external view returns (
-        
-        string[] memory doctorNames,
-        string[] memory hospitalNames,
-        string[] memory dateOfBirths,
-        string[] memory genders,
-        string[] memory emails,
-        string[] memory hhNumbers,
-        string[] memory specializations,
-        string[] memory departments,
-        string[] memory designations,
-        string[] memory workExperiences
-    ) {
+    function getAllDoctors()
+        external
+        view
+        returns (
+            string[] memory doctorNames,
+            string[] memory hospitalNames,
+            string[] memory dateOfBirths,
+            string[] memory genders,
+            string[] memory emails,
+            string[] memory hhNumbers,
+            string[] memory specializations,
+            string[] memory departments,
+            string[] memory designations,
+            string[] memory workExperiences
+        )
+    {
         uint256 len = allDoctorHHNumbers.length;
-        
+
         doctorNames = new string[](len);
         hospitalNames = new string[](len);
         dateOfBirths = new string[](len);
@@ -97,7 +101,7 @@ contract DoctorRegistration {
         for (uint256 i = 0; i < len; i++) {
             string memory hh = allDoctorHHNumbers[i];
             Doctor memory doctor = doctors[hh];
-            
+
             doctorNames[i] = doctor.doctorName;
             hospitalNames[i] = doctor.hospitalName;
             dateOfBirths[i] = doctor.dateOfBirth;
@@ -110,7 +114,6 @@ contract DoctorRegistration {
             workExperiences[i] = doctor.workExperience;
         }
         return (
-            
             doctorNames,
             hospitalNames,
             dateOfBirths,
@@ -124,24 +127,30 @@ contract DoctorRegistration {
         );
     }
 
-    
-
     function isRegisteredDoctor(string memory _hhNumber) external view returns (bool) {
         return doctorAddresses[_hhNumber] != address(0);
     }
 
-    function getDoctorDetails(string memory _hhNumber) external view returns (
-        address _walletAddress,
-        string memory _doctorName,
-        string memory _hospitalName,
-        string memory _dateOfBirth,
-        string memory _gender,
-        string memory _email,
-        string memory _specialization,
-        string memory _department,
-        string memory _designation,
-        string memory _workExperience
-    ) {
+    function getDoctorCount() external view returns (uint256) {
+        return allDoctorHHNumbers.length;
+    }
+
+    function getDoctorDetails(string memory _hhNumber)
+        external
+        view
+        returns (
+            address _walletAddress,
+            string memory _doctorName,
+            string memory _hospitalName,
+            string memory _dateOfBirth,
+            string memory _gender,
+            string memory _email,
+            string memory _specialization,
+            string memory _department,
+            string memory _designation,
+            string memory _workExperience
+        )
+    {
         require(doctorAddresses[_hhNumber] != address(0), "Doctor not registered");
         Doctor memory doctor = doctors[_hhNumber];
         return (
@@ -157,48 +166,4 @@ contract DoctorRegistration {
             doctor.workExperience
         );
     }
-
-    function validatePassword(string memory _hhNumber, string memory _password) external view returns (bool) {
-        require(doctorAddresses[_hhNumber] != address(0), "Doctor not registered");
-        return keccak256(abi.encodePacked(_password)) == keccak256(abi.encodePacked(doctors[_hhNumber].password));
-    }
-
-    function grantPermission(
-        string memory _patientNumber,
-        string memory _doctorNumber,
-        string memory _patientName
-    ) external {
-            PatientList memory newRecord = PatientList(
-                _patientNumber,
-                _patientName
-            );
-            Dpermission[_doctorNumber].push(newRecord);
-        doctorPermissions[_patientNumber][_doctorNumber] = true;
-    }
-
-    function isPermissionGranted(string memory _patientNumber,string memory _doctorNumber) external view returns (bool) {
-        return doctorPermissions[_patientNumber][_doctorNumber];
-    }
-
-    function revokePermission(string memory _patientNumber, string memory _doctorNumber) public {
-        doctorPermissions[_patientNumber][_doctorNumber] = false;
-
-        // Remove the patient's record from the list
-        for (uint i = 0; i < Dpermission[_doctorNumber].length; i++) {
-            if (keccak256(abi.encodePacked(Dpermission[_doctorNumber][i].patient_number)) == keccak256(abi.encodePacked(_patientNumber))) {
-                // Delete the patient's record by shifting elements
-                for (uint j = i; j < Dpermission[_doctorNumber].length - 1; j++) {
-                    Dpermission[_doctorNumber][j] = Dpermission[_doctorNumber][j + 1];
-                }
-                Dpermission[_doctorNumber].pop();
-                break;
-            }
-        }
-    }
-
-
-    function getPatientList(string memory _doctorNumber) public view returns (PatientList[] memory) {
-        return Dpermission[_doctorNumber];
-    }
-
 }

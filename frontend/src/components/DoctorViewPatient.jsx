@@ -1,24 +1,19 @@
 import React, { useContext, useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Web3Context } from "../context/Web3Context";
-
+import toast, { Toaster } from "react-hot-toast";
 
 const DoctorViewPatient = () => {
-
-  const backend_url = import.meta.env.VITE_BACKEND_URL;
-
-
+  const backend_url = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
 
   const { web3, account, contract } = useContext(Web3Context);
   const { hhNumber, patient_Number } = useParams();
-  console.log("hhNumber:", hhNumber);
-  console.log("patient_Number:", patient_Number);
   const navigate = useNavigate();
+
   const [patientDetails, setPatientDetails] = useState(null);
   const [error, setError] = useState(null);
-  const [UserContract, setUserContract] = useState(null);
-  const [address, setAddress] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [permissionDenied, setPermissionDenied] = useState(false);
   const [records, setRecords] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [showPrescriptionModal, setShowPrescriptionModal] = useState(false);
@@ -28,34 +23,54 @@ const DoctorViewPatient = () => {
 
   useEffect(() => {
     const init = async () => {
-      if (!web3 || !contract || !hhNumber || !patient_Number) {
-        setError(
-          "Web3 or contract not loaded or hhNumber/patient_name is missing."
-        );
+      if (!contract || !contract.patient || !hhNumber || !patient_Number) {
+        setError("Web3 connection or patient contract not initialized.");
         setLoading(false);
         return;
       }
       try {
-        setAddress(account);
-        setUserContract(contract.patient);
+        setLoading(true);
+        // Verify that the patient has granted permission to this doctor
+        const hasPermission = await contract.patient.methods
+          .isPermissionGranted(patient_Number, hhNumber)
+          .call();
+
+        if (!hasPermission) {
+          setPermissionDenied(true);
+          setError("Access Denied: The patient has not granted you viewing permission for their records.");
+          setLoading(false);
+          return;
+        }
+
         const result = await contract.patient.methods
           .getPatientDetails(patient_Number)
           .call();
+
         setPatientDetails(result);
         setError(null);
-      } catch (error) {
-        setError("Error retrieving patient details");
+      } catch (err) {
+        console.error("Error retrieving patient details:", err);
+        setError("Error retrieving patient details from blockchain.");
       } finally {
         setLoading(false);
       }
     };
     init();
-  }, [web3, contract, hhNumber, patient_Number, account]);
+  }, [contract, hhNumber, patient_Number]);
+
+  const getAuthHeaders = () => {
+    const token = localStorage.getItem("arogya_auth_token");
+    const headers = { "Content-Type": "application/json" };
+    if (token) headers["Authorization"] = `Bearer ${token}`;
+    return headers;
+  };
 
   const handleViewRecords = async () => {
     try {
       setLoading(true);
-      const response = await fetch(`${backend_url}/api/records/${patient_Number}`);
+      const response = await fetch(`${backend_url}/api/records/${patient_Number}`, {
+        headers: getAuthHeaders(),
+      });
       if (!response.ok) throw new Error("Failed to fetch records");
       const data = await response.json();
       setRecords(data || []);
@@ -73,13 +88,15 @@ const DoctorViewPatient = () => {
     setPrescriptionLoading(true);
     setPrescriptionError(null);
     try {
-      const response = await fetch(`${backend_url}/api/prescriptions/${patient_Number}`);
-      if (!response.ok) throw new Error('Failed to fetch prescriptions');
+      const response = await fetch(`${backend_url}/api/prescriptions/${patient_Number}`, {
+        headers: getAuthHeaders(),
+      });
+      if (!response.ok) throw new Error("Failed to fetch prescriptions");
       const data = await response.json();
-      setPrescriptions(data);
+      setPrescriptions(data || []);
       setShowPrescriptionModal(true);
     } catch (err) {
-      setPrescriptionError('Error retrieving prescriptions');
+      setPrescriptionError("Error retrieving prescriptions");
       setPrescriptions([]);
       setShowPrescriptionModal(true);
     } finally {
@@ -98,203 +115,184 @@ const DoctorViewPatient = () => {
   const handleClose = () => {
     navigate(`/doctor/${hhNumber}/patientlist`);
   };
+
   const handleLogout = () => {
+    localStorage.removeItem("arogya_auth_token");
+    localStorage.removeItem("arogya_user");
     navigate("/login");
   };
 
   return (
-    <div className="bg-gradient-to-b from-black to-gray-800 min-h-screen flex flex-col justify-center items-center p-4 font-mono text-white">
-       <div className="absolute top-8 right-10 z-30 animate-fade-in">
-          <button
-            onClick={handleLogout}
-            className="px-6 py-2 bg-gradient-to-r from-gray-700 to-gray-900 text-white rounded-xl font-bold text-lg shadow-lg hover:from-gray-900 hover:to-black transition-all duration-200 border border-gray-400/30"
-          >
-            Logout
-          </button>
-        </div>
-        <img
-          src= "https://images.unsplash.com/photo-1522071820081-009f0129c71c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80"
-          alt="Healthcare Dashboard"
-          className="absolute inset-0 w-full h-full object-cover object-center opacity-90 z-0"
-          style={{ filter: 'blur(0.5px) brightness(0.95)' }}
-        />
-      <div className="w-full max-w-2xl bg-gray-900 bg-opacity-90 backdrop-blur-lg p-10 rounded-3xl shadow-2xl flex flex-col items-center animate-fade-in">
+    <div className="bg-gradient-to-b from-black to-gray-800 min-h-screen flex flex-col justify-center items-center p-4 font-mono text-white relative">
+      <Toaster position="top-right" reverseOrder={false} />
+      <div className="absolute top-8 right-10 z-30">
+        <button
+          onClick={handleLogout}
+          className="px-5 py-2 bg-gradient-to-r from-gray-700 to-gray-900 text-white rounded-xl font-bold text-sm shadow hover:from-gray-900 hover:to-black transition border border-gray-600"
+        >
+          Logout
+        </button>
+      </div>
 
-        <h1 className="text-3xl sm:text-4xl font-bold mb-6 text-teal-300 drop-shadow">
-          Patient Details
+      <div className="w-full max-w-2xl bg-gray-900/95 backdrop-blur-xl p-8 sm:p-10 rounded-3xl shadow-2xl flex flex-col items-center border border-teal-500/30">
+        <h1 className="text-3xl font-extrabold mb-6 text-teal-300 drop-shadow">
+          Patient Medical Profile
         </h1>
+
         {loading ? (
-          <div className="text-teal-300 text-lg font-semibold flex items-center gap-2 mb-6">
-            <svg
-              className="animate-spin h-6 w-6"
-              fill="none"
-              viewBox="0 0 24 24"
+          <div className="text-teal-300 text-base font-semibold flex items-center gap-3 mb-6">
+            <div className="animate-spin rounded-full h-6 w-6 border-2 border-teal-400 border-t-transparent"></div>
+            Verifying permission on blockchain...
+          </div>
+        ) : permissionDenied ? (
+          <div className="w-full p-6 bg-red-900/30 border border-red-500/50 rounded-2xl flex flex-col items-center text-center gap-4">
+            <span className="text-4xl">🚫</span>
+            <h2 className="text-xl font-bold text-red-300">Viewing Access Not Granted</h2>
+            <p className="text-sm text-gray-300">
+              The patient (HH Number: <span className="font-bold text-yellow-300">{patient_Number}</span>) has not granted viewing permission to your Doctor ID (<span className="font-bold text-teal-300">{hhNumber}</span>).
+            </p>
+            <p className="text-xs text-gray-400">
+              Please ask the patient to navigate to "Grant Permission" on their dashboard and add your Doctor ID.
+            </p>
+            <button
+              onClick={handleClose}
+              className="mt-2 px-6 py-2 bg-gray-800 hover:bg-gray-700 rounded-xl text-white font-bold transition"
             >
-              <circle
-                className="opacity-25"
-                cx="12"
-                cy="12"
-                r="10"
-                stroke="currentColor"
-                strokeWidth="4"
-              ></circle>
-              <path
-                className="opacity-75"
-                fill="currentColor"
-                d="M4 12a8 8 0 018-8v8z"
-              ></path>
-            </svg>
-            Loading patient details...
+              ← Back to Patient List
+            </button>
           </div>
         ) : error ? (
-          <p className="text-red-500 text-lg font-semibold mb-4 flex items-center gap-2">
-            <span>⚠️</span>
+          <div className="p-4 bg-red-900/40 border border-red-500/50 rounded-xl text-red-200 text-sm mb-4">
             {error}
-          </p>
+          </div>
         ) : patientDetails ? (
-          <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-6 mb-8">
-            <div className="flex flex-col gap-2">
-              <span className="text-gray-400 text-xs font-semibold uppercase tracking-wider">
-                Name
-              </span>
-              <span className="text-xl font-bold text-yellow-400 flex items-center gap-2">
-                {patientDetails[1]}
-              </span>
-              <span className="text-gray-400 text-xs font-semibold uppercase tracking-wider">
-                DOB
-              </span>
-              <span className="text-lg text-white">{patientDetails[2]}</span>
-              <span className="text-gray-400 text-xs font-semibold uppercase tracking-wider">
-                Gender
-              </span>
-              <span className="text-lg text-white">{patientDetails[3]}</span>
-              <span className="text-gray-400 text-xs font-semibold uppercase tracking-wider">
-                Blood Group
-              </span>
-              <span className="text-lg text-white">{patientDetails[4]}</span>
+          <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8 bg-gray-800/40 p-6 rounded-2xl border border-gray-700">
+            <div className="flex flex-col gap-1">
+              <span className="text-gray-400 text-xs font-semibold uppercase">Patient Name</span>
+              <span className="text-xl font-bold text-yellow-400">{patientDetails.name || patientDetails[1]}</span>
+              <span className="text-gray-400 text-xs font-semibold uppercase mt-2">Date of Birth</span>
+              <span className="text-sm text-white">{patientDetails.dateOfBirth || patientDetails[2]}</span>
+              <span className="text-gray-400 text-xs font-semibold uppercase mt-2">Gender</span>
+              <span className="text-sm text-white">{patientDetails.gender || patientDetails[3]}</span>
+              <span className="text-gray-400 text-xs font-semibold uppercase mt-2">Blood Group</span>
+              <span className="text-sm text-white">{patientDetails.bloodGroup || patientDetails[4]}</span>
             </div>
-            <div className="flex flex-col gap-2">
-              <span className="text-gray-400 text-xs font-semibold uppercase tracking-wider">
-                Email
-              </span>
-              <span className="text-lg text-teal-300 font-semibold">
-                {patientDetails[5]}
-              </span>
-              <span className="text-gray-400 text-xs font-semibold uppercase tracking-wider">
-                Home Address
-              </span>
-              <span className="text-lg text-teal-200 font-semibold">
-                {patientDetails[6]}
-              </span>
-              <span className="text-gray-400 text-xs font-semibold uppercase tracking-wider">
-                HH Number
-              </span>
-              <span className="text-lg text-yellow-400 font-semibold">
-                {patient_Number}
+            <div className="flex flex-col gap-1">
+              <span className="text-gray-400 text-xs font-semibold uppercase">Email</span>
+              <span className="text-sm text-teal-300">{patientDetails.email || patientDetails[6]}</span>
+              <span className="text-gray-400 text-xs font-semibold uppercase mt-2">Home Address</span>
+              <span className="text-sm text-gray-200">{patientDetails.homeAddress || patientDetails[5]}</span>
+              <span className="text-gray-400 text-xs font-semibold uppercase mt-2">HH Number</span>
+              <span className="text-sm font-bold text-yellow-400 font-mono">{patient_Number}</span>
+              <span className="text-gray-400 text-xs font-semibold uppercase mt-2">Access Status</span>
+              <span className="text-xs text-green-400 font-bold flex items-center gap-1">
+                <span className="w-2 h-2 rounded-full bg-green-400"></span> Blockchain Verified
               </span>
             </div>
           </div>
         ) : null}
-        <div className="flex flex-col sm:flex-row gap-4 w-full justify-center mt-4">
-          <button
-            onClick={handleViewRecords}
-            className="flex-1 px-6 py-3 bg-blue-500 hover:bg-blue-600 rounded-lg font-bold text-white transition-all duration-150 shadow"
-          >
-            View Records
-          </button>
-          <button
-            onClick={handleViewPrescriptions}
-            className="flex-1 px-6 py-3 bg-purple-500 hover:bg-purple-600 rounded-lg font-bold text-white transition-all duration-150 shadow"
-          >
-            Past Prescriptions
-          </button>
-          <button
-            onClick={handlePrescription}
-            className="flex-1 px-6 py-3 bg-green-500 hover:bg-green-600 rounded-lg font-bold text-white transition-all duration-150 shadow"
-          >
-            Prescription Consultancy
-          </button>
-          <button
-            onClick={handleClose}
-            className="flex-1 px-6 py-3 bg-red-500 hover:bg-red-600 rounded-lg font-bold text-white transition-all duration-150 shadow"
-          >
-            Close
-          </button>
-        </div>
+
+        {!permissionDenied && (
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 w-full">
+            <button
+              onClick={handleViewRecords}
+              className="px-4 py-3 bg-blue-600 hover:bg-blue-700 rounded-xl font-bold text-xs text-white transition shadow"
+            >
+              View Records
+            </button>
+            <button
+              onClick={handleViewPrescriptions}
+              className="px-4 py-3 bg-purple-600 hover:bg-purple-700 rounded-xl font-bold text-xs text-white transition shadow"
+            >
+              Prescriptions
+            </button>
+            <button
+              onClick={handlePrescription}
+              className="px-4 py-3 bg-teal-600 hover:bg-teal-700 rounded-xl font-bold text-xs text-white transition shadow"
+            >
+              Write Prescription
+            </button>
+            <button
+              onClick={handleClose}
+              className="px-4 py-3 bg-gray-700 hover:bg-gray-600 rounded-xl font-bold text-xs text-white transition shadow"
+            >
+              Close
+            </button>
+          </div>
+        )}
       </div>
-      {/* Modal for document list */}
+
+      {/* Modal for Records List */}
       {showModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-60">
-          <div className="bg-gray-900 rounded-2xl shadow-2xl p-8 max-w-lg w-full animate-fade-in flex flex-col items-center">
-            <h2 className="text-2xl font-bold text-teal-300 mb-4">
-              Patient Past Medical Records
-            </h2>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4">
+          <div className="bg-gray-900 rounded-2xl shadow-2xl p-6 sm:p-8 max-w-lg w-full border border-teal-500/40 flex flex-col items-center">
+            <h2 className="text-xl font-bold text-teal-300 mb-4">Patient Past Medical Records</h2>
             {records.length > 0 ? (
-              <ul className="w-full space-y-4 mb-4">
+              <ul className="w-full space-y-3 mb-4 max-h-60 overflow-y-auto">
                 {records.map((rec, idx) => (
                   <li
                     key={idx}
-                    className="flex items-center justify-between bg-gray-800 rounded-lg px-4 py-3 shadow hover:bg-gray-700 transition cursor-pointer"
+                    className="flex items-center justify-between bg-gray-800 rounded-xl px-4 py-3 border border-gray-700"
                   >
-                    <span className="text-teal-200 font-semibold truncate max-w-xs">
+                    <span className="text-teal-200 text-sm font-semibold truncate max-w-xs">
                       {rec.fileName || rec.ipfsHash}
                     </span>
                     <button
                       onClick={() => handleOpenDocument(rec.ipfsHash)}
-                      className="ml-4 px-4 py-2 bg-blue-500 hover:bg-blue-600 rounded font-bold text-white transition-all duration-150"
+                      className="ml-3 px-3 py-1 bg-blue-600 hover:bg-blue-700 rounded-lg font-bold text-xs text-white transition"
                     >
-                      Open
+                      View on IPFS
                     </button>
                   </li>
                 ))}
               </ul>
             ) : (
-              <p className="text-gray-300">No documents found.</p>
+              <p className="text-gray-400 text-sm mb-4">No records found for this patient.</p>
             )}
             <button
               onClick={() => setShowModal(false)}
-              className="mt-2 px-6 py-2 bg-red-500 hover:bg-red-600 rounded-lg font-bold text-white transition-all duration-150"
+              className="px-6 py-2 bg-gray-800 hover:bg-gray-700 rounded-xl text-xs font-bold text-white transition"
             >
               Close
             </button>
           </div>
         </div>
       )}
-      {/* Modal for prescription list */}
+
+      {/* Modal for Prescriptions List */}
       {showPrescriptionModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-60">
-          <div className="bg-gray-900 rounded-2xl shadow-2xl p-8 max-w-lg w-full animate-fade-in flex flex-col items-center">
-            <h2 className="text-2xl font-bold text-purple-300 mb-4">Patient Prescriptions</h2>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4">
+          <div className="bg-gray-900 rounded-2xl shadow-2xl p-6 sm:p-8 max-w-lg w-full border border-purple-500/40 flex flex-col items-center">
+            <h2 className="text-xl font-bold text-purple-300 mb-4">Patient Prescription History</h2>
             {prescriptionLoading ? (
-              <div className="text-purple-300 text-lg font-semibold flex items-center gap-2 mb-6">
-                <svg className="animate-spin h-6 w-6" fill="none" viewBox="0 0 24 24">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"></path>
-                </svg>
-                Loading prescriptions...
-              </div>
-            ) : prescriptionError ? (
-              <p className="text-red-500 text-lg font-semibold mb-4 flex items-center gap-2">
-                <span>⚠️</span>
-                {prescriptionError}
-              </p>
+              <p className="text-gray-400 text-sm mb-4">Loading prescriptions...</p>
             ) : prescriptions.length > 0 ? (
-              <ul className="w-full space-y-4 mb-4">
+              <ul className="w-full space-y-3 mb-4 max-h-60 overflow-y-auto">
                 {prescriptions.map((pres, idx) => (
-                  <li key={idx} className="bg-gray-800 rounded-lg px-4 py-3 shadow flex flex-col gap-1">
-                    <span className="text-teal-200 font-bold text-lg">{pres.title}</span>
-                    <span className="text-gray-300 text-sm">{pres.description}</span>
-                    <span className="text-xs text-gray-400">Doctor: <span className="font-semibold text-purple-300">{pres.doctorNumber}</span></span>
-                    <span className="text-xs text-gray-400">Date: <span className="font-semibold text-yellow-300">{pres.date}</span></span>
+                  <li key={idx} className="bg-gray-800 rounded-xl p-4 border border-gray-700 flex flex-col gap-1">
+                    <span className="text-teal-300 font-bold text-base">{pres.title}</span>
+                    <span className="text-gray-300 text-xs">{pres.description}</span>
+                    <div className="flex justify-between items-center text-xs text-gray-400 mt-2">
+                      <span>Doctor: {pres.doctorNumber}</span>
+                      <span>Date: {pres.date}</span>
+                    </div>
+                    {pres.ipfsHash && (
+                      <button
+                        onClick={() => handleOpenDocument(pres.ipfsHash)}
+                        className="mt-2 self-start text-xs text-blue-400 hover:underline"
+                      >
+                        📄 View Attached PDF
+                      </button>
+                    )}
                   </li>
                 ))}
               </ul>
             ) : (
-              <p className="text-gray-300">No prescriptions found.</p>
+              <p className="text-gray-400 text-sm mb-4">No prescriptions found for this patient.</p>
             )}
             <button
               onClick={() => setShowPrescriptionModal(false)}
-              className="mt-2 px-6 py-2 bg-red-500 hover:bg-red-600 rounded-lg font-bold text-white transition-all duration-150"
+              className="px-6 py-2 bg-gray-800 hover:bg-gray-700 rounded-xl text-xs font-bold text-white transition"
             >
               Close
             </button>

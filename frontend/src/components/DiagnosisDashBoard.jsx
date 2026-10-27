@@ -49,7 +49,9 @@ const DiagnosticDashBoard = () => {
   }, [hhNumber, web3, contract]);
 
   const handleLogout = () => {
-    navigate("/home");
+    localStorage.removeItem("arogya_auth_token");
+    localStorage.removeItem("arogya_user");
+    navigate("/login");
   };
 
   return (

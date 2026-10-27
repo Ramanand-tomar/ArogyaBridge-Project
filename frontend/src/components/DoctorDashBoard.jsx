@@ -43,7 +43,9 @@ const DoctorDashBoard = () => {
   }, [hhNumber]);
 
   const handleLogout = () => {
-    navigate("/home");
+    localStorage.removeItem("arogya_auth_token");
+    localStorage.removeItem("arogya_user");
+    navigate("/login");
   };
 
   return (

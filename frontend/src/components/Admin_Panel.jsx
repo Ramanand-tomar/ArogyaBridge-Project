@@ -31,10 +31,15 @@ const Admin_Panel = () => {
   const [AllDoctors, setAllDoctors] = useState([]);
   const [AllDiagnosis, setAllDiagnosis] = useState([]);
 
+  const getAuthHeaders = () => {
+    const token = localStorage.getItem("arogya_auth_token");
+    return token ? { headers: { Authorization: `Bearer ${token}` } } : {};
+  };
+
   // Fetch all data from backend
   const fetchPatients = async () => {
     try {
-      const res = await axios.get(`${API_BASE}/api/AllUserReports`);
+      const res = await axios.get(`${API_BASE}/api/AllUserReports`, getAuthHeaders());
       return res.data || [];
     } catch {
       return [];
@@ -42,7 +47,7 @@ const Admin_Panel = () => {
   };
   const fetchPrescriptionReports = async () => {
     try {
-      const res = await axios.get(`${API_BASE}/api/prescription_reports`);
+      const res = await axios.get(`${API_BASE}/api/prescription_reports`, getAuthHeaders());
       return res.data || [];
     } catch {
       return [];
@@ -50,7 +55,7 @@ const Admin_Panel = () => {
   };
   const fetchDiagnosisReports = async () => {
     try {
-      const res = await axios.get(`${API_BASE}/api/diagnosisreport`);
+      const res = await axios.get(`${API_BASE}/api/diagnosisreport`, getAuthHeaders());
       return res.data || [];
     } catch {
       return [];
@@ -58,7 +63,7 @@ const Admin_Panel = () => {
   };
   const fetchUserReports = async () => {
     try {
-      const res = await axios.get(`${API_BASE}/api/AllUserReports`);
+      const res = await axios.get(`${API_BASE}/api/AllUserReports`, getAuthHeaders());
       return res.data || [];
     } catch {
       return [];
@@ -67,7 +72,7 @@ const Admin_Panel = () => {
 
   const fetchLoginHistory = async () => {
     try {
-      const res = await axios.get(`${API_BASE}/api/Login-history`);
+      const res = await axios.get(`${API_BASE}/api/login-history`, getAuthHeaders());
       return res.data || [];
     } catch {
       return [];

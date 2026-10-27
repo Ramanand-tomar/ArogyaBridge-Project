@@ -4,270 +4,230 @@ import { Web3Context } from "../context/Web3Context";
 import toast, { Toaster } from "react-hot-toast";
 
 const DiagnosisRegistration = () => {
-  const { web3, account, contract } = useContext(Web3Context);
+  const { account, contract, connectWallet } = useContext(Web3Context);
   const navigate = useNavigate();
 
-  const [diagnosticAddress, setDiagnosticAddress] = useState("");
   const [diagnosticName, setDiagnosticName] = useState("");
   const [hospitalName, setHospitalName] = useState("");
   const [diagnosticLocation, setDiagnosticLocation] = useState("");
-  const [hhNumber, sethhNumber] = useState("");
-  const [hhNumberError, sethhNumberError] = useState("");
-  const [password, setPassword] = useState("");
-  const [passwordError, setPasswordError] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [confirmPasswordError, setConfirmPasswordError] = useState("");
   const [email, setEmail] = useState("");
   const [emailError, setEmailError] = useState("");
-  const [diagnosisContract, setDiagnosisContract] = useState(null);
+  const [hhNumber, sethhNumber] = useState("");
+  const [hhNumberError, sethhNumberError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
-  useEffect(() => {
-    if (account) setDiagnosticAddress(account);
-    if (contract?.diagnosis) setDiagnosisContract(contract.diagnosis);
-  }, [account, contract]);
+  const handlehhNumberChange = (e) => {
+    const input = e.target.value.trim();
+    const regex = /^\d{6}$/;
+    sethhNumber(input);
+    sethhNumberError(regex.test(input) ? "" : "Please enter a valid 6-digit HH Number.");
+  };
+
+  const handleEmailChange = (e) => {
+    const val = e.target.value.trim();
+    setEmail(val);
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    setEmailError(emailRegex.test(val) ? "" : "Please enter a valid email address.");
+  };
+
+  const cancelOperation = () => {
+    navigate("/home");
+  };
 
   const handleRegister = async () => {
-    if (
-      !diagnosticName ||
-      !hospitalName ||
-      !diagnosticLocation ||
-      !email ||
-      !hhNumber ||
-      !password ||
-      !confirmPassword
-    ) {
-      toast.error("Please fill in all required fields.");
+    if (isLoading) return;
+
+    if (!diagnosticName || !hospitalName || !diagnosticLocation || !email || !hhNumber) {
+      toast.error("Please fill in all required diagnostic center fields.");
       return;
     }
 
-    if (password.length < 8) {
-      setPassword("");
-      setConfirmPassword("");
-      setPasswordError("Password must be at least 8 characters long.");
+    if (hhNumber.length !== 6) {
+      toast.error("Diagnostic HH Number must be exactly 6 digits.");
       return;
     }
 
-    if (password !== confirmPassword) {
-      setConfirmPassword("");
-      setConfirmPasswordError("Passwords do not match.");
+    if (!contract || !contract.diagnosis) {
+      toast.error("Diagnostic smart contract not initialized. Please verify your Web3 connection.");
       return;
     }
 
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      setEmailError("Please enter a valid email address.");
-      return;
-    } else {
-      setEmailError("");
+    let activeWallet = account;
+    if (!activeWallet) {
+      try {
+        activeWallet = await connectWallet();
+      } catch (err) {
+        toast.error("Please connect your Web3 wallet to complete registration.");
+        return;
+      }
     }
+
+    setIsLoading(true);
+    const toastId = toast.loading("Checking diagnostic center registry on blockchain...");
 
     try {
-      const isRegDoc = await diagnosisContract.methods
-        .isRegisteredDiagnostic(hhNumber)
-        .call();
+      const isRegDiag = await contract.diagnosis.methods.isRegisteredDiagnostic(hhNumber).call();
 
-      if (isRegDoc) {
-        toast.error("Diagnostic already exists");
+      if (isRegDiag) {
+        toast.dismiss(toastId);
+        toast.error("A diagnostic center with this HH Number is already registered.");
+        setIsLoading(false);
+        navigate("/login");
         return;
       }
 
-      await diagnosisContract.methods
+      toast.loading("Please confirm the transaction in your wallet...", { id: toastId });
+
+      await contract.diagnosis.methods
         .registerDiagnostic(
           diagnosticName,
           hospitalName,
           diagnosticLocation,
           email,
-          hhNumber,
-          password
+          hhNumber
         )
-        .send({ from: diagnosticAddress, gas: 4000000 });
+        .send({ from: activeWallet });
 
-      toast.success("Diagnostic registered successfully!");
-      navigate("/login");
+      toast.dismiss(toastId);
+      toast.success("Diagnostic Center registered successfully on the blockchain! 🔬");
+
+      setTimeout(() => {
+        navigate("/login");
+      }, 1000);
     } catch (error) {
-      console.error("Registration failed:", error);
-      toast.error("Error during registration.");
+      console.error("Diagnostic Registration Error:", error);
+      toast.dismiss(toastId);
+      toast.error(error.message || "An error occurred while registering the diagnostic center.");
+    } finally {
+      setIsLoading(false);
     }
-  };
-
-  const handleEmailChange = (e) => setEmail(e.target.value);
-
-  const handlehhNumberChange = (e) => {
-    const inputhhNumber = e.target.value;
-    const phoneRegex = /^\d{6}$/;
-    if (phoneRegex.test(inputhhNumber)) {
-      sethhNumber(inputhhNumber);
-      sethhNumberError("");
-    } else {
-      sethhNumber(inputhhNumber);
-      sethhNumberError("Please enter a 6-digit HH Number.");
-    }
-  };
-
-  const handlePasswordChange = (e) => {
-    setPassword(e.target.value);
-    setPasswordError("");
-  };
-
-  const handleConfirmPasswordChange = (e) => {
-    setConfirmPassword(e.target.value);
-    setConfirmPasswordError("");
-  };
-
-  const cancelOperation = () => {
-    navigate("/");
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-950 via-gray-900 to-teal-900 p-4 font-mono">
+    <div className="bg-gradient-to-b from-black to-gray-800 p-4 sm:p-10 font-mono text-white min-h-screen flex flex-col justify-center items-center">
       <Toaster position="top-right" reverseOrder={false} />
-      <div className="w-full max-w-2xl bg-white/10 rounded-3xl shadow-2xl p-8 animate-fade-in-up border border-teal-400/30">
-        <h2 className="text-4xl text-teal-400 mb-8 font-extrabold text-center drop-shadow animate-bounce">
-          Diagnostic Registration
-        </h2>
-        <form className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+      <div className="w-full max-w-4xl bg-gray-900/90 backdrop-blur-xl p-8 sm:p-12 rounded-3xl shadow-2xl border border-teal-500/30">
+        <h1 className="text-3xl sm:text-4xl font-extrabold mb-2 text-center text-transparent bg-clip-text bg-gradient-to-r from-teal-400 to-blue-500">
+          Diagnostic Center Registration
+        </h1>
+        <p className="text-center text-xs text-gray-400 mb-8">
+          Decentralized Laboratory Facility (Zero Passwords on Blockchain • Smart-Contract Verified)
+        </p>
+
+        <form className="grid grid-cols-1 md:grid-cols-2 gap-6" onSubmit={(e) => { e.preventDefault(); handleRegister(); }}>
+          {/* Diagnostic Center Name */}
           <div>
-            <label className="block font-bold text-teal-200 mb-1" htmlFor="diagnosticName">
-              Diagnostic Center Name
+            <label className="block text-sm font-semibold text-gray-300" htmlFor="diagnosticName">
+              Diagnostic Center / Lab Name *
             </label>
             <input
               id="diagnosticName"
-              name="diagnosticName"
               type="text"
               required
-              className="mt-1 p-2 w-full text-white bg-gray-800 border border-teal-500 rounded-lg focus:ring-2 focus:ring-teal-400 transition duration-200"
-              placeholder="Enter Diagnostic's Center Full Name"
+              className="mt-2 p-3 w-full text-white bg-gray-800 border border-gray-700 rounded-xl focus:ring-2 focus:ring-teal-400 transition"
+              placeholder="e.g. LifeCare Diagnostic Labs"
               value={diagnosticName}
               onChange={(e) => setDiagnosticName(e.target.value)}
             />
           </div>
+
+          {/* Affiliated Hospital */}
           <div>
-            <label className="block font-bold text-teal-200 mb-1" htmlFor="hospitalName">
-              Hospital Name
+            <label className="block text-sm font-semibold text-gray-300" htmlFor="hospitalName">
+              Affiliated Hospital / Clinic *
             </label>
             <input
               id="hospitalName"
-              name="hospitalName"
               type="text"
               required
-              className="mt-1 p-2 w-full text-white bg-gray-800 border border-teal-500 rounded-lg focus:ring-2 focus:ring-teal-400 transition duration-200"
-              placeholder="Enter Hospital Name"
+              className="mt-2 p-3 w-full text-white bg-gray-800 border border-gray-700 rounded-xl focus:ring-2 focus:ring-teal-400 transition"
+              placeholder="e.g. Metro City Hospital"
               value={hospitalName}
               onChange={(e) => setHospitalName(e.target.value)}
             />
           </div>
+
+          {/* Location */}
           <div>
-            <label className="block font-bold text-teal-200 mb-1" htmlFor="diagnosticLocation">
-              Location
+            <label className="block text-sm font-semibold text-gray-300" htmlFor="diagnosticLocation">
+              Location / City *
             </label>
             <input
-              type="text"
               id="diagnosticLocation"
-              name="diagnosticLocation"
-              placeholder="Enter the location of Diagnostic center"
+              type="text"
+              required
+              className="mt-2 p-3 w-full text-white bg-gray-800 border border-gray-700 rounded-xl focus:ring-2 focus:ring-teal-400 transition"
+              placeholder="e.g. Mumbai, Maharashtra"
               value={diagnosticLocation}
               onChange={(e) => setDiagnosticLocation(e.target.value)}
-              className="mt-1 p-2 w-full text-white bg-gray-800 border border-teal-500 rounded-lg focus:ring-2 focus:ring-teal-400 transition duration-200"
             />
           </div>
+
+          {/* Email Address */}
           <div>
-            <label className="block font-bold text-teal-200 mb-1" htmlFor="email">
-              Email Address
+            <label className="block text-sm font-semibold text-gray-300" htmlFor="email">
+              Laboratory Contact Email *
             </label>
             <input
               id="email"
-              name="email"
               type="email"
               required
-              className={`mt-1 p-2 w-full text-white bg-gray-800 border border-teal-500 rounded-lg focus:ring-2 focus:ring-teal-400 transition duration-200 ${
-                emailError && "border-red-500"
-              }`}
-              placeholder="Enter your Email-id"
+              className={`mt-2 p-3 w-full text-white bg-gray-800 border ${
+                emailError ? "border-red-500" : "border-gray-700"
+              } rounded-xl focus:ring-2 focus:ring-teal-400 transition`}
+              placeholder="e.g. lab@lifecare.com"
               value={email}
               onChange={handleEmailChange}
             />
-            {emailError && (
-              <p className="text-red-500 text-sm mt-1">{emailError}</p>
-            )}
+            {emailError && <p className="text-red-400 text-xs mt-1">{emailError}</p>}
           </div>
-          <div>
-            <label className="block font-bold text-teal-200 mb-1" htmlFor="hhNumber">
-              HH Number
+
+          {/* HH Number */}
+          <div className="md:col-span-2">
+            <label className="block text-sm font-semibold text-gray-300" htmlFor="hhNumber">
+              Diagnostic Center HH Number (6 Digits) *
             </label>
             <input
               id="hhNumber"
-              name="hhNumber"
               type="text"
+              maxLength={6}
               required
-              className={`mt-1 p-2 w-full text-white bg-gray-800 border border-teal-500 rounded-lg focus:ring-2 focus:ring-teal-400 transition duration-200 ${
-                hhNumberError && "border-red-500"
-              }`}
-              placeholder="HH Number"
+              className={`mt-2 p-3 w-full text-white bg-gray-800 border ${
+                hhNumberError ? "border-red-500" : "border-gray-700"
+              } rounded-xl focus:ring-2 focus:ring-teal-400 transition`}
+              placeholder="e.g. 300001"
               value={hhNumber}
               onChange={handlehhNumberChange}
             />
-            {hhNumberError && (
-              <p className="text-red-500 text-sm mt-1">{hhNumberError}</p>
-            )}
+            {hhNumberError && <p className="text-red-400 text-xs mt-1">{hhNumberError}</p>}
           </div>
-          <div>
-            <label className="block font-bold text-teal-200 mb-1" htmlFor="password">
-              Password
-            </label>
-            <input
-              id="password"
-              name="password"
-              type="password"
-              required
-              className={`mt-1 p-2 w-full text-white bg-gray-800 border border-teal-500 rounded-lg focus:ring-2 focus:ring-teal-400 transition duration-200 ${
-                passwordError && "border-red-500"
-              }`}
-              placeholder="Enter your Password"
-              value={password}
-              onChange={handlePasswordChange}
-            />
-            {passwordError && (
-              <p className="text-red-500 text-sm mt-1">{passwordError}</p>
-            )}
+
+          {/* Wallet Address Display */}
+          <div className="md:col-span-2 p-3 bg-gray-800/60 rounded-xl border border-gray-700 flex justify-between items-center text-xs">
+            <span className="text-gray-400">Connected Wallet:</span>
+            <span className="font-mono text-teal-400">
+              {account ? `${account.slice(0, 10)}...${account.slice(-8)}` : "Wallet not connected"}
+            </span>
           </div>
-          <div>
-            <label className="block font-bold text-teal-200 mb-1" htmlFor="confirmPassword">
-              Confirm Password
-            </label>
-            <input
-              id="confirmPassword"
-              name="confirmPassword"
-              type="password"
-              required
-              className={`mt-1 p-2 w-full text-white bg-gray-800 border border-teal-500 rounded-lg focus:ring-2 focus:ring-teal-400 transition duration-200 ${
-                confirmPasswordError && "border-red-500"
-              }`}
-              placeholder="Confirm your Password"
-              value={confirmPassword}
-              onChange={handleConfirmPasswordChange}
-            />
-            {confirmPasswordError && (
-              <p className="text-red-500 text-sm mt-1">
-                {confirmPasswordError}
-              </p>
-            )}
+
+          {/* Submit & Close Buttons */}
+          <div className="md:col-span-2 flex justify-center gap-4 mt-4">
+            <button
+              type="submit"
+              disabled={isLoading}
+              className="py-3 px-8 bg-gradient-to-r from-teal-500 to-blue-600 hover:from-teal-600 hover:to-blue-700 text-white font-bold rounded-xl shadow-lg transition duration-200 transform hover:scale-105 disabled:opacity-50"
+            >
+              {isLoading ? "Submitting Transaction..." : "Register Diagnostic Center"}
+            </button>
+            <button
+              type="button"
+              onClick={cancelOperation}
+              className="py-3 px-8 bg-gray-800 hover:bg-gray-700 text-gray-300 font-bold rounded-xl border border-gray-700 transition"
+            >
+              Cancel
+            </button>
           </div>
         </form>
-        <div className="flex flex-col sm:flex-row gap-4 text-center mt-8 justify-center">
-          <button
-            type="button"
-            onClick={handleRegister}
-            className="py-3 px-8 bg-gradient-to-r from-teal-500 to-blue-500 text-white rounded-full font-bold shadow-lg hover:scale-105 hover:from-teal-600 hover:to-blue-600 transition-all duration-300 animate-pulse"
-          >
-            Register
-          </button>
-          <button
-            onClick={cancelOperation}
-            className="py-3 px-8 bg-gradient-to-r from-pink-500 to-yellow-400 text-white rounded-full font-bold shadow-lg hover:scale-105 hover:from-pink-600 hover:to-yellow-500 transition-all duration-300 animate-pulse"
-          >
-            Close
-          </button>
-        </div>
       </div>
     </div>
   );

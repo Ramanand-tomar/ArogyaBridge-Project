@@ -95,10 +95,9 @@ const PatientDashBoard = () => {
 
   // Logout handler
   const handleLogout = () => {
-    // Optionally clear any local/session storage or context here
-    // localStorage.clear();
-    // sessionStorage.clear();
-    Navigate("/home");
+    localStorage.removeItem("arogya_auth_token");
+    localStorage.removeItem("arogya_user");
+    Navigate("/login");
   };
 
   return (

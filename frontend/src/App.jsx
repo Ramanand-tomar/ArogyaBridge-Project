@@ -1,19 +1,18 @@
-import { useState } from 'react'
+import { useState } from 'react';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import React from 'react';
 
-
-import Login from "./components/LoginPage.jsx"
+import Login from "./components/LoginPage.jsx";
 import About from './components/About.jsx';
 import Homepage from './components/Homepage.jsx';
-import Walletconnect from './components/Walletconnect.jsx'
+import Walletconnect from './components/Walletconnect.jsx';
 import DiagnosisRegistration from './components/DiagnosisRegistration.jsx';
 import DoctorRegistration from './components/DoctorRegistration.jsx'; 
 import PatientRegistration from './components/PatientRegistration.jsx';
 import PatientDashBoard from './components/PatientDashBoard.jsx';
 import DoctorDashBoard from './components/DoctorDashBoard.jsx';
 import DiagnosticDashBoard from './components/DiagnosisDashBoard.jsx';
-import ViewRecrods from './components/ViewRecrods.jsx';
+import ViewRecords from './components/ViewRecrods.jsx';
 import UploadRecords from './components/UploadRecords.jsx';
 import GrantPermission from './components/GrantPermission.jsx';
 import DoctorPrescription from './components/DoctorPrecription.jsx';
@@ -23,14 +22,15 @@ import DoctorViewPatient from './components/DoctorViewPatient.jsx';
 import DiagnosisForm from './components/DiagnosisForm.jsx';
 import DiagnosticReport from './components/DiagnosticReport.jsx';
 import Admin_Panel from './components/Admin_Panel.jsx';
-
-
+import ProtectedRoute from './components/ProtectedRoute.jsx';
+import Chatbot from './components/ChatBot.jsx';
 
 function App() {
   const [showWalletConnect, setShowWalletConnect] = useState(false);
   const onclick_walletconnect = () => {
     setShowWalletConnect(true);
-  }
+  };
+
   const Router = createBrowserRouter([
     {
       path: "/",
@@ -39,37 +39,45 @@ function App() {
           {/* Animated Gradient Background */}
           <div className="fixed inset-0 z-0 bg-gradient-to-br from-blue-400 via-purple-400 to-pink-400 animate-gradient-x blur-2xl opacity-60"></div>
           {/* Main Content Card */}
-          <div className="relative z-10 flex flex-col items-center justify-center h-screen">
+          <div className="relative z-10 flex flex-col items-center justify-center min-h-screen p-4">
             <div className="backdrop-blur-lg bg-white/30 rounded-3xl shadow-2xl p-10 max-w-xl w-full flex flex-col items-center border border-white/40">
-              <img src="/vite.svg" alt="Logo" className="w-20 h-20 mb-4 animate-bounce" />
-              <h1 className="text-4xl font-extrabold text-gray-900 mb-2 drop-shadow-lg">HealthRecords dApp</h1>
-              <h2 className="text-lg text-gray-700 mb-4 font-medium">Empowering Secure, Decentralized Healthcare</h2>
-              <p className="text-center text-gray-600 mb-6">Connect your wallet to access, manage, and share your health records securely with doctors and diagnostic centers. Experience the future of healthcare with blockchain and IPFS.</p>
-              <button className="px-8 py-3 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 text-white font-semibold shadow-lg hover:scale-105 hover:from-purple-500 hover:to-pink-500 transition-all duration-300 mb-4" onClick={onclick_walletconnect}>
+              <span className="text-6xl mb-4 animate-bounce">🩺</span>
+              <h1 className="text-4xl font-extrabold text-gray-900 mb-2 drop-shadow-lg text-center">ArogyaBridge</h1>
+              <h2 className="text-lg text-gray-700 mb-4 font-medium text-center">Empowering Secure, Decentralized Healthcare</h2>
+              <p className="text-center text-gray-600 mb-6 text-sm">
+                Connect your Web3 wallet to manage, protect, and share electronic health records with doctors and diagnostic labs.
+                Zero plaintext credentials • Complete patient consent control • IPFS integration.
+              </p>
+              <button
+                className="px-8 py-3 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 text-white font-semibold shadow-lg hover:scale-105 hover:from-purple-500 hover:to-pink-500 transition-all duration-300 mb-4"
+                onClick={onclick_walletconnect}
+              >
                 Connect Wallet
               </button>
               {showWalletConnect && <Walletconnect />}
               {/* Features Section */}
               <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-4 w-full">
                 <div className="flex flex-col items-center p-4 bg-white/40 rounded-xl shadow-md">
-                  <span className="text-3xl mb-2 animate-spin">🔒</span>
-                  <span className="font-bold">Privacy First</span>
-                  <span className="text-xs text-gray-500 text-center">Your data is encrypted and only accessible by you and those you trust.</span>
+                  <span className="text-3xl mb-2">🔒</span>
+                  <span className="font-bold text-sm">Privacy First</span>
+                  <span className="text-xs text-gray-500 text-center">Decentralized consent control. Only authorized doctors view your data.</span>
                 </div>
                 <div className="flex flex-col items-center p-4 bg-white/40 rounded-xl shadow-md">
-                  <span className="text-3xl mb-2 animate-spin">⚡</span>
-                  <span className="font-bold">Instant Access</span>
-                  <span className="text-xs text-gray-500 text-center">Access and share records instantly with doctors and labs.</span>
+                  <span className="text-3xl mb-2">⚡</span>
+                  <span className="font-bold text-sm">Instant Access</span>
+                  <span className="text-xs text-gray-500 text-center">Share health records seamlessly with labs and specialists.</span>
                 </div>
                 <div className="flex flex-col items-center p-4 bg-white/40 rounded-xl shadow-md">
-                  <span className="text-3xl mb-2 animate-spin">🌐</span>
-                  <span className="font-bold">Decentralized</span>
-                  <span className="text-xs text-gray-500 text-center">Built on blockchain & IPFS for transparency and security.</span>
+                  <span className="text-3xl mb-2">🌐</span>
+                  <span className="font-bold text-sm">Web3 & IPFS</span>
+                  <span className="text-xs text-gray-500 text-center">Tamper-proof blockchain audit trails and distributed storage.</span>
                 </div>
               </div>
             </div>
             {/* Footer */}
-            <footer className="mt-10 text-gray-700 text-xs opacity-80">© {new Date().getFullYear()} HealthRecords dApp. All rights reserved.</footer>
+            <footer className="mt-10 text-gray-700 text-xs opacity-80">
+              © {new Date().getFullYear()} ArogyaBridge EHR. Enterprise Grade Decentralized Healthcare.
+            </footer>
           </div>
         </>
       ),
@@ -100,52 +108,99 @@ function App() {
     },
     { 
       path: "/patient/:hhNumber",
-      element: <PatientDashBoard />,
+      element: (
+        <ProtectedRoute requiredRole="Patient">
+          <PatientDashBoard />
+        </ProtectedRoute>
+      ),
     },
     { 
       path: "/doctor/:hhNumber",
-      element: <DoctorDashBoard />,
+      element: (
+        <ProtectedRoute requiredRole="Doctor">
+          <DoctorDashBoard />
+        </ProtectedRoute>
+      ),
     },
     { 
       path: "/diagnosis/:hhNumber",
-      element: <DiagnosticDashBoard />,
+      element: (
+        <ProtectedRoute requiredRole="diagnosis">
+          <DiagnosticDashBoard />
+        </ProtectedRoute>
+      ),
     },
-  
     {
       path: "/patient/:hhNumber/viewrecords",
-      element: <ViewRecrods />,
+      element: (
+        <ProtectedRoute requiredRole="Patient">
+          <ViewRecords />
+        </ProtectedRoute>
+      ),
     },
     {
       path: "/patient/:hhNumber/uploadrecords",
-      element: <UploadRecords />, 
+      element: (
+        <ProtectedRoute requiredRole="Patient">
+          <UploadRecords />
+        </ProtectedRoute>
+      ),
     },
     {
       path: "/patient/:hhNumber/grantpermission",
-      element: <GrantPermission />,
+      element: (
+        <ProtectedRoute requiredRole="Patient">
+          <GrantPermission />
+        </ProtectedRoute>
+      ),
     },
     {
       path: "/doctor/:hhNumber/doctorviewpatient/:patient_Number/doctor-Prescription",
-      element: <DoctorPrescription />,
+      element: (
+        <ProtectedRoute requiredRole="Doctor">
+          <DoctorPrescription />
+        </ProtectedRoute>
+      ),
     },
     {
       path: "/doctor/:hhNumber/viewdoctorprofile",
-      element: <DoctorProfile />,
+      element: (
+        <ProtectedRoute requiredRole="Doctor">
+          <DoctorProfile />
+        </ProtectedRoute>
+      ),
     },
     {
       path: "/doctor/:hhNumber/patientlist",
-      element: <PatientList />,
+      element: (
+        <ProtectedRoute requiredRole="Doctor">
+          <PatientList />
+        </ProtectedRoute>
+      ),
     },
     {
       path: "/doctor/:hhNumber/doctorviewpatient/:patient_Number",
-      element: <DoctorViewPatient />, 
+      element: (
+        <ProtectedRoute requiredRole="Doctor">
+          <DoctorViewPatient />
+        </ProtectedRoute>
+      ),
     },
     {
       path: "/diagnosis/:hhNumber/diagnosisform",
-      element: <DiagnosisForm />,
+      element: (
+        <ProtectedRoute requiredRole="diagnosis">
+          <DiagnosisForm />
+        </ProtectedRoute>
+      ),
     },
     {
       path: "/patient/:hhNumber/diagnosticreport",
-      element: <DiagnosticReport />,
+      element: (
+        <ProtectedRoute requiredRole="Patient">
+          <DiagnosticReport />
+        </ProtectedRoute>
+      ),
     },
     {
       path: "/admin-panel",
@@ -153,50 +208,12 @@ function App() {
     }
   ]);
 
-  
-
   return (
     <>
       <RouterProvider router={Router} />
-      
+      <Chatbot />
     </>
-  )
+  );
 }
 
-export default App
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+export default App;

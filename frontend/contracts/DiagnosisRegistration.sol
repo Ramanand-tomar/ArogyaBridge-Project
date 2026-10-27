@@ -1,34 +1,41 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.19;
 
+/**
+ * @title DiagnosisRegistration
+ * @dev Manages registration and validation of Diagnostic Centers.
+ * Plaintext passwords removed.
+ */
 contract DiagnosisRegistration {
-     struct Diagnostic {
+    struct Diagnostic {
         address walletAddress;
         string diagnosticName;
         string hospitalName;
         string diagnosticLocation;
         string email;
         string hhNumber;
-        string password;
     }
 
     mapping(string => address) private diagnosticAddresses;
     mapping(string => Diagnostic) private diagnostics;
+    mapping(address => string) public walletToDiagnosticHH;
 
     string[] public allDiagnosticHHNumbers;
-    
 
-    event DiagnosticRegistered(string hhNumber, string diagnosticName, address walletAddress);
+    event DiagnosticRegistered(
+        string indexed hhNumber,
+        string diagnosticName,
+        address indexed walletAddress
+    );
 
     function registerDiagnostic(
         string memory _diagnosticName,
         string memory _hospitalName,
         string memory _diagnosticLocation,
         string memory _email,
-        string memory _hhNumber,
-        string memory _password
+        string memory _hhNumber
     ) external {
-        require(diagnosticAddresses[_hhNumber] == address(0), "Diagnostic already registered");
+        require(diagnosticAddresses[_hhNumber] == address(0), "Diagnostic center already registered");
 
         Diagnostic memory newDiagnostic = Diagnostic({
             walletAddress: msg.sender,
@@ -36,24 +43,28 @@ contract DiagnosisRegistration {
             hospitalName: _hospitalName,
             diagnosticLocation: _diagnosticLocation,
             email: _email,
-            hhNumber: _hhNumber,
-            password: _password
+            hhNumber: _hhNumber
         });
 
         diagnostics[_hhNumber] = newDiagnostic;
         diagnosticAddresses[_hhNumber] = msg.sender;
+        walletToDiagnosticHH[msg.sender] = _hhNumber;
         allDiagnosticHHNumbers.push(_hhNumber);
+
         emit DiagnosticRegistered(_hhNumber, _diagnosticName, msg.sender);
     }
 
-    function getAllDiagnostics() external view returns (
-        
-        string[] memory diagnosticNames,
-        string[] memory hospitalNames,
-        string[] memory diagnosticLocations,
-        string[] memory emails,
-        string[] memory hhNumbers
-    ) {
+    function getAllDiagnostics()
+        external
+        view
+        returns (
+            string[] memory diagnosticNames,
+            string[] memory hospitalNames,
+            string[] memory diagnosticLocations,
+            string[] memory emails,
+            string[] memory hhNumbers
+        )
+    {
         uint256 len = allDiagnosticHHNumbers.length;
         diagnosticNames = new string[](len);
         hospitalNames = new string[](len);
@@ -79,19 +90,25 @@ contract DiagnosisRegistration {
         );
     }
 
-// ...existing code...
-
     function isRegisteredDiagnostic(string memory _hhNumber) external view returns (bool) {
         return diagnosticAddresses[_hhNumber] != address(0);
     }
 
-    function getDiagnosticDetails(string memory _hhNumber) external view returns (
-        address _walletAddress,
-        string memory _diagnosticName,
-        string memory _hospitalName,
-        string memory _diagnosticLocation,
-        string memory _email
-    ) {
+    function getDiagnosticCount() external view returns (uint256) {
+        return allDiagnosticHHNumbers.length;
+    }
+
+    function getDiagnosticDetails(string memory _hhNumber)
+        external
+        view
+        returns (
+            address _walletAddress,
+            string memory _diagnosticName,
+            string memory _hospitalName,
+            string memory _diagnosticLocation,
+            string memory _email
+        )
+    {
         require(diagnosticAddresses[_hhNumber] != address(0), "Diagnostic not registered");
         Diagnostic memory diagnostic = diagnostics[_hhNumber];
         return (
@@ -101,10 +118,5 @@ contract DiagnosisRegistration {
             diagnostic.diagnosticLocation,
             diagnostic.email
         );
-    }
-
-    function validatePassword(string memory _hhNumber, string memory _password) external view returns (bool) {
-        require(diagnosticAddresses[_hhNumber] != address(0), "Diagnostic not registered");
-        return keccak256(abi.encodePacked(_password)) == keccak256(abi.encodePacked(diagnostics[_hhNumber].password));
     }
 }
