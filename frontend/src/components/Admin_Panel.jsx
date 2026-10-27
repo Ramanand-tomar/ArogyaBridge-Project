@@ -180,32 +180,32 @@ const Admin_Panel = () => {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center min-h-screen bg-gradient-to-b from-gray-900 to-gray-800">
-        <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-teal-400"></div>
+      <div className="flex justify-center items-center min-h-screen bg-slate-50">
+        <div className="animate-spin rounded-full h-14 w-14 border-b-2 border-teal-600"></div>
       </div>
     );
   }
 
   const adminMetrics = [
-    { label: "IPFS Patient Files", count: patients.length, icon: "📁", badgeBg: "bg-teal-500/10", badgeColor: "text-teal-400" },
-    { label: "Digital Prescriptions", count: prescriptionReports.length, icon: "💊", badgeBg: "bg-blue-500/10", badgeColor: "text-blue-400" },
-    { label: "Diagnosis Reports", count: diagnosisReports.length, icon: "🔬", badgeBg: "bg-pink-500/10", badgeColor: "text-pink-400" },
-    { label: "User Session Logins", count: LoginHistoryData.length, icon: "🔐", badgeBg: "bg-purple-500/10", badgeColor: "text-purple-400" },
-    { label: "Patients Registered", count: AllPatients.length, icon: "👤", badgeBg: "bg-emerald-500/10", badgeColor: "text-emerald-400" },
-    { label: "Doctors Registered", count: AllDoctors.length, icon: "👨‍⚕️", badgeBg: "bg-amber-500/10", badgeColor: "text-amber-400" },
-    { label: "Diagnostic Centers", count: AllDiagnosis.length, icon: "🏥", badgeBg: "bg-cyan-500/10", badgeColor: "text-cyan-400" },
+    { label: "IPFS Patient Files", count: patients.length, icon: "📁", badgeBg: "bg-teal-50", badgeColor: "text-teal-700" },
+    { label: "Digital Prescriptions", count: prescriptionReports.length, icon: "💊", badgeBg: "bg-blue-50", badgeColor: "text-blue-700" },
+    { label: "Diagnosis Reports", count: diagnosisReports.length, icon: "🔬", badgeBg: "bg-pink-50", badgeColor: "text-pink-700" },
+    { label: "User Session Logins", count: LoginHistoryData.length, icon: "🔐", badgeBg: "bg-purple-50", badgeColor: "text-purple-700" },
+    { label: "Patients Registered", count: AllPatients.length, icon: "👤", badgeBg: "bg-emerald-50", badgeColor: "text-emerald-700" },
+    { label: "Doctors Registered", count: AllDoctors.length, icon: "👨‍⚕️", badgeBg: "bg-amber-50", badgeColor: "text-amber-700" },
+    { label: "Diagnostic Centers", count: AllDiagnosis.length, icon: "🏥", badgeBg: "bg-cyan-50", badgeColor: "text-cyan-700" },
   ];
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col relative overflow-hidden">
+    <div className="min-h-screen bg-slate-50 text-slate-900 flex flex-col relative selection:bg-teal-100 selection:text-teal-900">
       <DashboardHeader portalTitle="Admin Analytics" roleBadge="Admin Panel" />
 
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-8 py-10">
         <div className="text-center mb-10">
-          <h1 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
+          <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
             Administrative & Clinical Analytics
           </h1>
-          <p className="text-sm text-slate-400 mt-2">
+          <p className="text-sm text-slate-600 mt-2">
             Real-time on-chain registry audit trails and decentralized storage activity across ArogyaBridge.
           </p>
         </div>
@@ -215,312 +215,310 @@ const Admin_Panel = () => {
           {adminMetrics.map((m, idx) => (
             <div
               key={idx}
-              className="p-5 rounded-2xl bg-slate-900/85 border border-slate-800 shadow-xl flex flex-col justify-between hover:border-slate-700 transition"
+              className="p-5 rounded-2xl bg-white border border-slate-200/90 shadow-sm flex flex-col justify-between hover:border-slate-300 transition"
             >
               <div className="flex items-center justify-between mb-3">
-                <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">{m.label}</span>
-                <span className={`p-2 rounded-xl text-lg ${m.badgeBg} ${m.badgeColor}`}>{m.icon}</span>
+                <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">{m.label}</span>
+                <span className={`p-2 rounded-xl text-lg border border-slate-100 ${m.badgeBg} ${m.badgeColor}`}>{m.icon}</span>
               </div>
-              <div className="text-3xl font-extrabold text-white">{m.count}</div>
+              <div className="text-3xl font-extrabold text-slate-900">{m.count}</div>
             </div>
           ))}
         </div>
   
-     <div className="m-4 flex flex-col md:flex-row items-center justify-center gap-6 animate-fade-in border border-teal-400 rounded-xl bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 shadow-2xl">
-  <div className="bg-gray-900 rounded-2xl shadow-xl p-6 w-full md:w-[400px] flex-1 transition-transform duration-300 hover:scale-105 animate-slide-in-up">
-    <h2 className="text-xl font-bold text-center text-teal-300 mb-4 animate-fade-in">
-      System Overview
-    </h2>
-    <ResponsiveContainer width="100%" height={260}>
-      <BarChart data={summaryData}>
-        <CartesianGrid strokeDasharray="4 4" />
-        <XAxis dataKey="name" stroke="#fff" />
-        <YAxis stroke="#fff" />
-        <Tooltip
-          contentStyle={{ backgroundColor: "#222", borderRadius: "8px", color: "#fff" }}
-        />
-        <Legend />
-        <Bar
-          dataKey="value"
-          fill="url(#barGradient)"
-          radius={[8, 8, 0, 0]}
-          animationDuration={1200}
-        />
-        <defs>
-          <linearGradient id="barGradient" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#fbbf24" />
-            <stop offset="100%" stopColor="#14b8a6" />
-          </linearGradient>
-        </defs>
-      </BarChart>
-    </ResponsiveContainer>
-  </div>
-</div>
-
-      {/* Total User Login  */}
-      <div className="mb-10 border border-teal-400/30 p-10 rounded-3xl shadow-2xl animate-fade-in ">
-        <h2 className="text-2xl font-bold text-blue-300 mb-4 text-center">
-          User Login History
-        </h2>
-        <div className="overflow-x-auto rounded-xl shadow-lg">
-          <table className="min-w-full bg-gray-800 text-white">
-            <thead>
-              <tr className="bg-teal-700 text-teal-100 border-teal-400/30">
-                <th className="py-2 px-4">User hhNumber</th>
-                <th className="py-2 px-4">User Name</th>
-                <th className="py-2 px-4">User type</th>
-                <th className="py-2 px-4">Login At</th>
-              </tr>
-            </thead>
-            <tbody>
-              {LoginHistoryData.map((p, i) => (
-                <tr
-                  key={i}
-                  className="hover:bg-gray-700 min-w-full border-teal-400/30 text-center"
-                >
-                  <td className="py-2 px-4">{p.hhNumber}</td>
-                  <td className="py-2 px-4">{p.name}</td>
-                  <td className="py-2 px-4">{p.type}</td>
-                  <td className="py-2 px-4">
-                    {new Date(p.uploadedAt).toLocaleString()}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+        {/* System Overview Chart */}
+        <div className="mb-10 p-6 rounded-3xl bg-white border border-slate-200 shadow-sm flex flex-col items-center">
+          <h2 className="text-lg font-bold text-center text-slate-900 mb-6">
+            System Distribution Overview
+          </h2>
+          <div className="w-full max-w-2xl h-[260px]">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={summaryData}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
+                <XAxis dataKey="name" stroke="#64748b" fontSize={12} />
+                <YAxis stroke="#64748b" fontSize={12} />
+                <Tooltip
+                  contentStyle={{ backgroundColor: "#ffffff", borderRadius: "12px", border: "1px solid #e2e8f0", color: "#0f172a" }}
+                />
+                <Legend />
+                <Bar
+                  dataKey="value"
+                  fill="url(#barGradient)"
+                  radius={[8, 8, 0, 0]}
+                  animationDuration={1000}
+                />
+                <defs>
+                  <linearGradient id="barGradient" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="#0d9488" />
+                    <stop offset="100%" stopColor="#2563eb" />
+                  </linearGradient>
+                </defs>
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
         </div>
-      </div>
 
-      <div className="mb-10 border border-teal-400/30 p-10 rounded-3xl shadow-2xl animate-fade-in ">
-        <h2 className="text-2xl font-bold text-blue-300 mb-4 text-center">
-          Total Patients Registered
-        </h2>
-        <div className="overflow-x-auto rounded-xl shadow-lg">
-          <table className="min-w-full bg-gray-800 text-white">
-            <thead>
-              <tr className="bg-teal-700 text-teal-100 border-teal-400/30">
-                <th className="py-2 px-4">hhNumber</th>
-                <th className="py-2 px-4">Name</th>
-                <th className="py-2 px-4">Address</th>
-                <th className="py-2 px-4">DoB</th>
-                <th className="py-2 px-4">BloodGroup</th>
-              </tr>
-            </thead>
-            <tbody>
-              {AllPatients.map((p, i) => (
-                <tr
-                  key={i}
-                  className="hover:bg-gray-700 min-w-full border-teal-400/30 text-center"
-                >
-                  <td className="py-2 px-4">{p.hhNumber}</td>
-                  <td className="py-2 px-4">{p.name}</td>
-                  <td className="py-2 px-4">{p.homeAddress}</td>
-                  <td className="py-2 px-4">{p.dateOfBirth}</td>
-                  <td className="py-2 px-4">{p.bloodGroup}</td>
+        {/* Total User Login */}
+        <div className="mb-10 border border-slate-200 p-6 sm:p-8 rounded-3xl shadow-sm bg-white">
+          <h2 className="text-xl font-bold text-slate-900 mb-4 text-center">
+            User Login History
+          </h2>
+          <div className="overflow-x-auto rounded-xl border border-slate-200">
+            <table className="min-w-full bg-white text-slate-800 text-sm">
+              <thead>
+                <tr className="bg-slate-100 text-slate-700 font-semibold border-b border-slate-200 text-xs uppercase tracking-wider">
+                  <th className="py-3 px-4">User hhNumber</th>
+                  <th className="py-3 px-4">User Name</th>
+                  <th className="py-3 px-4">User type</th>
+                  <th className="py-3 px-4">Login At</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {LoginHistoryData.map((p, i) => (
+                  <tr
+                    key={i}
+                    className="hover:bg-slate-50 border-b border-slate-100 text-center transition"
+                  >
+                    <td className="py-3 px-4 font-mono">{p.hhNumber}</td>
+                    <td className="py-3 px-4 font-medium">{p.name}</td>
+                    <td className="py-3 px-4">{p.type}</td>
+                    <td className="py-3 px-4 text-slate-500">
+                      {new Date(p.uploadedAt).toLocaleString()}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
-      </div>
 
-      <div className="mb-10 border border-teal-400/30 p-10 rounded-3xl shadow-2xl animate-fade-in ">
-        <h2 className="text-2xl font-bold text-blue-300 mb-4 text-center">
-          Total Doctors Registered
-        </h2>
-        <div className="overflow-x-auto rounded-xl shadow-lg">
-          <table className="min-w-full bg-gray-800 text-white">
-            <thead>
-              <tr className="bg-teal-700 text-teal-100 border-teal-400/30">
-                <th className="py-2 px-4">HH Number</th>
-                <th className="py-2 px-4">Name</th>
-                <th className="py-2 px-4">Hospital</th>
-                <th className="py-2 px-4">Specialization</th>
-                <th className="py-2 px-4">Experience</th>
-              </tr>
-            </thead>
-            <tbody>
-              {AllDoctors.map((p, i) => (
-                <tr
-                  key={i}
-                  className="hover:bg-gray-700 min-w-full border-teal-400/30 text-center"
-                >
-                  <td className="py-2 px-4">{p.hhNumber}</td>
-                  <td className="py-2 px-4">{p.name}</td>
-                  <td className="py-2 px-4">{p.hospitalName}</td>
-                  <td className="py-2 px-4">{p.specialization}</td>
-                  <td className="py-2 px-4">{p.workExperience}</td>
+        {/* Patients Registered */}
+        <div className="mb-10 border border-slate-200 p-6 sm:p-8 rounded-3xl shadow-sm bg-white">
+          <h2 className="text-xl font-bold text-slate-900 mb-4 text-center">
+            Total Patients Registered
+          </h2>
+          <div className="overflow-x-auto rounded-xl border border-slate-200">
+            <table className="min-w-full bg-white text-slate-800 text-sm">
+              <thead>
+                <tr className="bg-slate-100 text-slate-700 font-semibold border-b border-slate-200 text-xs uppercase tracking-wider">
+                  <th className="py-3 px-4">HH Number</th>
+                  <th className="py-3 px-4">Name</th>
+                  <th className="py-3 px-4">Address</th>
+                  <th className="py-3 px-4">DoB</th>
+                  <th className="py-3 px-4">Blood Group</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {AllPatients.map((p, i) => (
+                  <tr
+                    key={i}
+                    className="hover:bg-slate-50 border-b border-slate-100 text-center transition"
+                  >
+                    <td className="py-3 px-4 font-mono">{p.hhNumber}</td>
+                    <td className="py-3 px-4 font-medium">{p.name}</td>
+                    <td className="py-3 px-4 text-slate-600">{p.homeAddress}</td>
+                    <td className="py-3 px-4">{p.dateOfBirth}</td>
+                    <td className="py-3 px-4 font-bold text-rose-600">{p.bloodGroup}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
-      </div>
 
-      <div className="mb-10 border border-teal-400/30 p-10 rounded-3xl shadow-2xl animate-fade-in ">
-        <h2 className="text-2xl font-bold text-blue-300 mb-4 text-center">
-          Total Diagnosis Center Registered
-        </h2>
-        <div className="overflow-x-auto rounded-xl shadow-lg">
-          <table className="min-w-full bg-gray-800 text-white">
-            <thead>
-              <tr className="bg-teal-700 text-teal-100 border-teal-400/30">
-                <th className="py-2 px-4">hhNumber</th>
-                <th className="py-2 px-4">Name</th>
-                <th className="py-2 px-4">Hospital</th>
-                <th className="py-2 px-4">Location</th>
-              </tr>
-            </thead>
-            <tbody>
-              {AllDiagnosis.map((p, i) => (
-                <tr
-                  key={i}
-                  className="hover:bg-gray-700 min-w-full border border-teal-400/30 text-center"
-                >
-                  <td className="py-2 px-4">{p.hhNumber}</td>
-                  <td className="py-2 px-4">{p.name}</td>
-                  <td className="py-2 px-4">{p.hospitalName}</td>
-                  <td className="py-2 px-4">{p.location}</td>
+        {/* Doctors Registered */}
+        <div className="mb-10 border border-slate-200 p-6 sm:p-8 rounded-3xl shadow-sm bg-white">
+          <h2 className="text-xl font-bold text-slate-900 mb-4 text-center">
+            Total Doctors Registered
+          </h2>
+          <div className="overflow-x-auto rounded-xl border border-slate-200">
+            <table className="min-w-full bg-white text-slate-800 text-sm">
+              <thead>
+                <tr className="bg-slate-100 text-slate-700 font-semibold border-b border-slate-200 text-xs uppercase tracking-wider">
+                  <th className="py-3 px-4">HH Number</th>
+                  <th className="py-3 px-4">Name</th>
+                  <th className="py-3 px-4">Hospital</th>
+                  <th className="py-3 px-4">Specialization</th>
+                  <th className="py-3 px-4">Experience</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {AllDoctors.map((p, i) => (
+                  <tr
+                    key={i}
+                    className="hover:bg-slate-50 border-b border-slate-100 text-center transition"
+                  >
+                    <td className="py-3 px-4 font-mono">{p.hhNumber}</td>
+                    <td className="py-3 px-4 font-medium">{p.name}</td>
+                    <td className="py-3 px-4 text-slate-600">{p.hospitalName}</td>
+                    <td className="py-3 px-4 text-teal-700 font-semibold">{p.specialization}</td>
+                    <td className="py-3 px-4">{p.workExperience}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
-      </div>
 
-      {/* Patient Files Table */}
-      <div className="mb-10 border border-teal-400/30 p-10 rounded-3xl shadow-2xl animate-fade-in">
-        <h2 className="text-2xl font-bold text-teal-300 mb-4 text-center">
-          Patient Files (IPFS)
-        </h2>
-        <div className="overflow-x-auto rounded-xl shadow-lg">
-          <table className="min-w-full bg-gray-800 text-white">
-            <thead>
-              <tr className="bg-teal-700 text-teal-100">
-                <th className="py-2 px-4">Patient Number</th>
-                <th className="py-2 px-4">File Name</th>
-
-                <th className="py-2 px-4">Uploaded At</th>
-                <th className="py-2 px-4">View</th>
-              </tr>
-            </thead>
-            <tbody>
-              {patients.map((p, i) => (
-                <tr
-                  key={i}
-                  className="hover:bg-gray-700 min-w-full border border-teal-400/30 text-center"
-                >
-                  <td className="py-2 px-4">{p.patientNumber}</td>
-                  <td className="py-2 px-4">{p.fileName}</td>
-
-                  <td className="py-2 px-4">
-                    {new Date(p.uploadedAt).toLocaleString()}
-                  </td>
-                  <td className="py-2 px-4">
-                    <a
-                      href={`https://ipfs.io/ipfs/${p.ipfsHash}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="bg-teal-500 hover:bg-teal-700 text-white font-bold py-1 px-3 rounded"
-                    >
-                      View
-                    </a>
-                  </td>
+        {/* Diagnosis Centers Registered */}
+        <div className="mb-10 border border-slate-200 p-6 sm:p-8 rounded-3xl shadow-sm bg-white">
+          <h2 className="text-xl font-bold text-slate-900 mb-4 text-center">
+            Total Diagnostic Centers Registered
+          </h2>
+          <div className="overflow-x-auto rounded-xl border border-slate-200">
+            <table className="min-w-full bg-white text-slate-800 text-sm">
+              <thead>
+                <tr className="bg-slate-100 text-slate-700 font-semibold border-b border-slate-200 text-xs uppercase tracking-wider">
+                  <th className="py-3 px-4">HH Number</th>
+                  <th className="py-3 px-4">Name</th>
+                  <th className="py-3 px-4">Hospital / Affiliation</th>
+                  <th className="py-3 px-4">Location</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {AllDiagnosis.map((p, i) => (
+                  <tr
+                    key={i}
+                    className="hover:bg-slate-50 border-b border-slate-100 text-center transition"
+                  >
+                    <td className="py-3 px-4 font-mono">{p.hhNumber}</td>
+                    <td className="py-3 px-4 font-medium">{p.name}</td>
+                    <td className="py-3 px-4 text-slate-600">{p.hospitalName}</td>
+                    <td className="py-3 px-4 text-slate-600">{p.location}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
-      </div>
 
-      {/* Prescription Reports Table */}
-      <div className="mb-10 border border-teal-400/30 p-10 rounded-3xl shadow-2xl animate-fade-in">
-        <h2 className="text-2xl font-bold text-blue-300 mb-4 text-center">
-          Prescription Reports
-        </h2>
-        <div className="overflow-x-auto rounded-xl shadow-lg">
-          <table className="min-w-full bg-gray-800 text-white">
-            <thead>
-              <tr className="bg-blue-700 text-blue-100">
-                <th className="py-2 px-4">Patient Number</th>
-                <th className="py-2 px-4">Doctor Number</th>
-                <th className="py-2 px-4">Title</th>
-
-                <th className="py-2 px-4">Date</th>
-                <th className="py-2 px-4">Created At</th>
-              </tr>
-            </thead>
-            <tbody>
-              {prescriptionReports.map((pr, i) => (
-                <tr
-                  key={i}
-                  className="hover:bg-gray-700 min-w-full border border-teal-400/30 text-center"
-                >
-                  <td className="py-2 px-4">{pr.patientNumber}</td>
-                  <td className="py-2 px-4">{pr.doctorNumber}</td>
-                  <td className="py-2 px-4">{pr.title}</td>
-
-                  <td className="py-2 px-4">{pr.date}</td>
-                  <td className="py-2 px-4">
-                    {new Date(pr.createdAt).toLocaleString()}
-                  </td>
+        {/* Patient Files Table */}
+        <div className="mb-10 border border-slate-200 p-6 sm:p-8 rounded-3xl shadow-sm bg-white">
+          <h2 className="text-xl font-bold text-slate-900 mb-4 text-center">
+            Patient Files (IPFS)
+          </h2>
+          <div className="overflow-x-auto rounded-xl border border-slate-200">
+            <table className="min-w-full bg-white text-slate-800 text-sm">
+              <thead>
+                <tr className="bg-slate-100 text-slate-700 font-semibold border-b border-slate-200 text-xs uppercase tracking-wider">
+                  <th className="py-3 px-4">Patient Number</th>
+                  <th className="py-3 px-4">File Name</th>
+                  <th className="py-3 px-4">Uploaded At</th>
+                  <th className="py-3 px-4">View</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {patients.map((p, i) => (
+                  <tr
+                    key={i}
+                    className="hover:bg-slate-50 border-b border-slate-100 text-center transition"
+                  >
+                    <td className="py-3 px-4 font-mono">{p.patientNumber}</td>
+                    <td className="py-3 px-4 font-medium">{p.fileName}</td>
+                    <td className="py-3 px-4 text-slate-500">
+                      {new Date(p.uploadedAt).toLocaleString()}
+                    </td>
+                    <td className="py-3 px-4">
+                      <a
+                        href={`https://ipfs.io/ipfs/${p.ipfsHash}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="bg-teal-600 hover:bg-teal-700 text-white font-semibold py-1 px-3 rounded-lg text-xs shadow-sm"
+                      >
+                        View File
+                      </a>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
-      </div>
 
-      {/* Diagnosis Reports Table */}
-      <div className="mb-10 border border-teal-400/30 p-10 rounded-3xl shadow-2xl animate-fade-in">
-        <h2 className="text-2xl font-bold text-pink-300 mb-4 text-center">
-          Diagnosis Reports
-        </h2>
-        <div className="overflow-x-auto rounded-xl shadow-lg">
-          <table className="min-w-full bg-gray-800 text-white">
-            <thead>
-              <tr className="bg-pink-700 text-pink-100">
-                <th className="py-2 px-4">HH Number</th>
-                <th className="py-2 px-4">Title</th>
-                <th className="py-2 px-4">Description</th>
-
-                <th className="py-2 px-4">Date</th>
-                <th className="py-2 px-4">Created At</th>
-                <th className="py-2 px-4">View File</th>
-              </tr>
-            </thead>
-            <tbody>
-              {diagnosisReports.map((r, i) => (
-                <tr
-                  key={i}
-                  className="hover:bg-gray-700 min-w-full border border-teal-400/30 text-center"
-                >
-                  <td className="py-2 px-4">{r.hhNumber}</td>
-                  <td className="py-2 px-4">{r.title}</td>
-                  <td className="py-2 px-4">{r.description}</td>
-
-                  <td className="py-2 px-4">
-                    {new Date(r.date).toLocaleDateString()}
-                  </td>
-                  <td className="py-2 px-4">
-                    {new Date(r.createdAt).toLocaleString()}
-                  </td>
-                  <td className="py-2 px-4">
-                    <a
-                      href={`https://ipfs.io/ipfs/${r.ipfsHash}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="bg-pink-500 hover:bg-pink-700 text-white font-bold py-1 px-3 rounded"
-                    >
-                      View
-                    </a>
-                  </td>
+        {/* Prescription Reports Table */}
+        <div className="mb-10 border border-slate-200 p-6 sm:p-8 rounded-3xl shadow-sm bg-white">
+          <h2 className="text-xl font-bold text-slate-900 mb-4 text-center">
+            Prescription Reports
+          </h2>
+          <div className="overflow-x-auto rounded-xl border border-slate-200">
+            <table className="min-w-full bg-white text-slate-800 text-sm">
+              <thead>
+                <tr className="bg-slate-100 text-slate-700 font-semibold border-b border-slate-200 text-xs uppercase tracking-wider">
+                  <th className="py-3 px-4">Patient Number</th>
+                  <th className="py-3 px-4">Doctor Number</th>
+                  <th className="py-3 px-4">Title</th>
+                  <th className="py-3 px-4">Date</th>
+                  <th className="py-3 px-4">Created At</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {prescriptionReports.map((pr, i) => (
+                  <tr
+                    key={i}
+                    className="hover:bg-slate-50 border-b border-slate-100 text-center transition"
+                  >
+                    <td className="py-3 px-4 font-mono">{pr.patientNumber}</td>
+                    <td className="py-3 px-4 font-mono">{pr.doctorNumber}</td>
+                    <td className="py-3 px-4 font-medium">{pr.title}</td>
+                    <td className="py-3 px-4">{pr.date}</td>
+                    <td className="py-3 px-4 text-slate-500">
+                      {new Date(pr.createdAt).toLocaleString()}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
-      </div>
+
+        {/* Diagnosis Reports Table */}
+        <div className="mb-10 border border-slate-200 p-6 sm:p-8 rounded-3xl shadow-sm bg-white">
+          <h2 className="text-xl font-bold text-slate-900 mb-4 text-center">
+            Diagnosis Reports
+          </h2>
+          <div className="overflow-x-auto rounded-xl border border-slate-200">
+            <table className="min-w-full bg-white text-slate-800 text-sm">
+              <thead>
+                <tr className="bg-slate-100 text-slate-700 font-semibold border-b border-slate-200 text-xs uppercase tracking-wider">
+                  <th className="py-3 px-4">HH Number</th>
+                  <th className="py-3 px-4">Title</th>
+                  <th className="py-3 px-4">Description</th>
+                  <th className="py-3 px-4">Date</th>
+                  <th className="py-3 px-4">Created At</th>
+                  <th className="py-3 px-4">View File</th>
+                </tr>
+              </thead>
+              <tbody>
+                {diagnosisReports.map((r, i) => (
+                  <tr
+                    key={i}
+                    className="hover:bg-slate-50 border-b border-slate-100 text-center transition"
+                  >
+                    <td className="py-3 px-4 font-mono">{r.hhNumber}</td>
+                    <td className="py-3 px-4 font-medium">{r.title}</td>
+                    <td className="py-3 px-4 text-slate-600">{r.description}</td>
+                    <td className="py-3 px-4">
+                      {new Date(r.date).toLocaleDateString()}
+                    </td>
+                    <td className="py-3 px-4 text-slate-500">
+                      {new Date(r.createdAt).toLocaleString()}
+                    </td>
+                    <td className="py-3 px-4">
+                      <a
+                        href={`https://ipfs.io/ipfs/${r.ipfsHash}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="bg-cyan-600 hover:bg-cyan-700 text-white font-semibold py-1 px-3 rounded-lg text-xs shadow-sm"
+                      >
+                        View File
+                      </a>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
       </main>
     </div>
   );

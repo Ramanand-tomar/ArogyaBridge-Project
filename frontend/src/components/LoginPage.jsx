@@ -183,17 +183,23 @@ const Login = () => {
   };
 
   return (
-    <div className="bg-gradient-to-b from-black to-gray-800 min-h-screen flex flex-col justify-center items-center p-4 font-mono text-white relative">
+    <div className="bg-slate-50 min-h-screen flex flex-col justify-center items-center p-4 text-slate-900 relative selection:bg-teal-100 selection:text-teal-900">
       <Toaster position="top-right" reverseOrder={false} />
       <Nav_bar />
 
-      <div className="w-full max-w-xl bg-gray-900/90 backdrop-blur-xl p-8 sm:p-12 rounded-3xl shadow-2xl border border-teal-500/30 mt-16">
+      {/* Subtle ambient light glow */}
+      <div className="absolute inset-0 pointer-events-none -z-10 overflow-hidden">
+        <div className="absolute top-1/4 left-1/3 w-96 h-96 bg-teal-100/50 rounded-full blur-3xl" />
+        <div className="absolute bottom-1/4 right-1/3 w-96 h-96 bg-blue-100/40 rounded-full blur-3xl" />
+      </div>
+
+      <div className="w-full max-w-xl bg-white p-8 sm:p-12 rounded-3xl shadow-sm border border-slate-200/90 mt-16">
         <div className="flex flex-col items-center mb-6">
           <span className="text-4xl mb-2">🔐</span>
-          <h2 className="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-teal-400 to-blue-500">
+          <h2 className="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-teal-700 to-blue-700 tracking-tight">
             Secure Web3 Login
           </h2>
-          <p className="text-gray-400 text-xs text-center mt-1">
+          <p className="text-slate-500 text-xs text-center mt-1">
             Sign-In with Ethereum (EIP-4361). Passwordless, tamper-proof cryptographic verification.
           </p>
         </div>
@@ -201,14 +207,14 @@ const Login = () => {
         <form onSubmit={handleLogin} className="space-y-6">
           {/* User Type Selection */}
           <div>
-            <label className="block text-sm font-semibold text-gray-300 mb-2">
+            <label className="block text-sm font-semibold text-slate-700 mb-2">
               Select User Type
             </label>
             <select
               id="type"
               value={Type}
               onChange={(e) => setType(e.target.value)}
-              className="w-full p-3 bg-gray-800 border border-gray-700 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-teal-400 transition"
+              className="w-full p-3 bg-white border border-slate-300 rounded-xl text-slate-900 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition text-sm"
               required
             >
               <option value="">Choose role (Patient, Doctor, Diagnosis)</option>
@@ -220,7 +226,7 @@ const Login = () => {
 
           {/* HH Number Input */}
           <div>
-            <label className="block text-sm font-semibold text-gray-300 mb-2">
+            <label className="block text-sm font-semibold text-slate-700 mb-2">
               Health Record Number (HH Number)
             </label>
             <input
@@ -230,20 +236,20 @@ const Login = () => {
               onChange={handlehhNumberChange}
               placeholder="e.g. 100001 (6 digits)"
               maxLength={6}
-              className={`w-full p-3 bg-gray-800 border ${
-                hhNumberError ? "border-red-500" : "border-gray-700"
-              } rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-teal-400 transition`}
+              className={`w-full p-3 bg-white border ${
+                hhNumberError ? "border-red-500" : "border-slate-300"
+              } rounded-xl text-slate-900 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition text-sm`}
               required
             />
             {hhNumberError && (
-              <p className="text-red-400 text-xs mt-1">{hhNumberError}</p>
+              <p className="text-red-500 text-xs mt-1">{hhNumberError}</p>
             )}
           </div>
 
           {/* Connected Wallet Info */}
-          <div className="p-3 bg-gray-800/60 rounded-xl border border-gray-700 text-xs text-gray-300 flex justify-between items-center">
-            <span>Connected Wallet:</span>
-            <span className="font-mono text-teal-400">
+          <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 text-xs text-slate-700 flex justify-between items-center">
+            <span className="font-medium">Connected Wallet:</span>
+            <span className="font-mono font-semibold text-teal-800">
               {account ? `${account.slice(0, 6)}...${account.slice(-4)}` : "Not connected"}
             </span>
           </div>
@@ -253,14 +259,14 @@ const Login = () => {
             <button
               type="submit"
               disabled={loading}
-              className="flex-1 py-3 px-6 bg-gradient-to-r from-teal-500 to-blue-600 hover:from-teal-600 hover:to-blue-700 text-white font-bold rounded-xl shadow-lg transition duration-200 transform hover:scale-[1.02] disabled:opacity-50"
+              className="flex-1 py-3 px-6 bg-gradient-to-r from-teal-600 to-blue-600 hover:from-teal-700 hover:to-blue-700 text-white font-bold rounded-xl shadow-sm transition hover:shadow disabled:opacity-50 text-sm"
             >
               {loading ? "Authenticating..." : "Sign-In with Wallet"}
             </button>
             <button
               type="button"
               onClick={() => navigate("/home")}
-              className="py-3 px-6 bg-gray-800 hover:bg-gray-700 text-gray-300 font-bold rounded-xl border border-gray-700 transition"
+              className="py-3 px-6 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl border border-slate-300 transition text-sm"
             >
               Cancel
             </button>
