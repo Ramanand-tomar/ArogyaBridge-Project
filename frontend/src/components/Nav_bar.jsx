@@ -68,9 +68,12 @@ const Nav_bar = () => {
           </Link>
         </div>
 
-        <div className="hidden md:flex items-center gap-3">
+        <div className="flex items-center gap-2 sm:gap-3">
           {account ? (
-            <div className="flex items-center gap-2 px-3 py-1.5 bg-teal-950/60 border border-teal-500/40 rounded-full">
+            <div
+              className="flex items-center gap-2 px-3 py-1.5 bg-teal-950/60 border border-teal-500/40 rounded-full"
+              title="MetaMask Wallet Connected"
+            >
               <span className="w-2.5 h-2.5 bg-green-400 rounded-full animate-pulse"></span>
               <span className="text-xs font-mono text-teal-300">
                 {account.slice(0, 6)}...{account.slice(-4)}
@@ -79,9 +82,12 @@ const Nav_bar = () => {
           ) : (
             <button
               onClick={connectWallet}
-              className="px-4 py-1.5 bg-gradient-to-r from-teal-500 to-blue-600 hover:from-teal-600 hover:to-blue-700 text-white rounded-full text-xs font-bold shadow transition"
+              className="flex items-center gap-1.5 px-3.5 py-1.5 bg-gradient-to-r from-teal-500 to-blue-600 hover:from-teal-600 hover:to-blue-700 text-white rounded-full text-xs font-bold shadow transition"
+              title="Connect MetaMask (Required only for blockchain transactions)"
             >
-              Connect Wallet
+              <span className="text-sm">🦊</span>
+              <span className="hidden sm:inline">Connect Wallet</span>
+              <span className="sm:hidden">Connect</span>
             </button>
           )}
         </div>

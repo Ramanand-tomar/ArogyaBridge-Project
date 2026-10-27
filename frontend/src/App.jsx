@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import React from 'react';
+import { Toaster } from 'react-hot-toast';
 
 import Login from "./components/LoginPage.jsx";
 import About from './components/About.jsx';
@@ -34,6 +35,14 @@ function App() {
   const Router = createBrowserRouter([
     {
       path: "/",
+      element: <Homepage />,
+    },
+    { 
+      path: "/home",
+      element: <Homepage />,
+    },
+    {
+      path: "/welcome",
       element: (
         <>
           {/* Animated Gradient Background */}
@@ -45,15 +54,23 @@ function App() {
               <h1 className="text-4xl font-extrabold text-gray-900 mb-2 drop-shadow-lg text-center">ArogyaBridge</h1>
               <h2 className="text-lg text-gray-700 mb-4 font-medium text-center">Empowering Secure, Decentralized Healthcare</h2>
               <p className="text-center text-gray-600 mb-6 text-sm">
-                Connect your Web3 wallet to manage, protect, and share electronic health records with doctors and diagnostic labs.
+                Open access for everyone to browse. Connect your Web3 wallet whenever you are ready to manage or verify medical records on-chain.
                 Zero plaintext credentials • Complete patient consent control • IPFS integration.
               </p>
-              <button
-                className="px-8 py-3 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 text-white font-semibold shadow-lg hover:scale-105 hover:from-purple-500 hover:to-pink-500 transition-all duration-300 mb-4"
-                onClick={onclick_walletconnect}
-              >
-                Connect Wallet
-              </button>
+              <div className="flex flex-col sm:flex-row gap-3 w-full justify-center mb-4">
+                <button
+                  className="px-6 py-3 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 text-white font-semibold shadow-lg hover:scale-105 hover:from-purple-500 hover:to-pink-500 transition-all duration-300"
+                  onClick={onclick_walletconnect}
+                >
+                  Connect Wallet
+                </button>
+                <a
+                  href="/"
+                  className="px-6 py-3 rounded-full bg-white/80 hover:bg-white text-gray-800 font-semibold shadow-md text-center border border-white/60 hover:scale-105 transition-all duration-300"
+                >
+                  Explore Platform →
+                </a>
+              </div>
               {showWalletConnect && <Walletconnect />}
               {/* Features Section */}
               <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-4 w-full">
@@ -89,10 +106,6 @@ function App() {
     { 
       path: "/about",
       element: <About />,
-    },
-    { 
-      path: "/home",
-      element: <Homepage />,
     },
     {
       path: "/diagnosis-Registration",
@@ -210,6 +223,7 @@ function App() {
 
   return (
     <>
+      <Toaster position="top-right" reverseOrder={false} />
       <RouterProvider router={Router} />
       <Chatbot />
     </>

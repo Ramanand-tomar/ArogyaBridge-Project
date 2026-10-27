@@ -1,5 +1,6 @@
 import React, { createContext, useEffect, useState, useCallback } from 'react';
 import Web3 from 'web3';
+import toast from 'react-hot-toast';
 
 import Patient_ABI from '../../ABI/patient_ABI.json';
 import Doctor_ABI from '../../ABI/doctor_ABI.json';
@@ -57,6 +58,7 @@ export const Web3Provider = ({ children }) => {
         setAccount(accounts[0]);
         setNetwork(networkId.toString());
         initContracts(web3Instance);
+        toast.success(`Wallet connected: ${accounts[0].slice(0, 6)}...${accounts[0].slice(-4)}`);
         return accounts[0];
       } else if (Ganache_Address) {
         const provider = new Web3.providers.HttpProvider(Ganache_Address);
@@ -72,11 +74,28 @@ export const Web3Provider = ({ children }) => {
         initContracts(web3Instance);
         return accounts[0];
       } else {
-        alert('Please install MetaMask or a Web3 compatible wallet to use ArogyaBridge.');
+        toast((t) => (
+          <div className="flex flex-col gap-1 text-xs">
+            <span className="font-bold text-gray-900">MetaMask Not Detected</span>
+            <span className="text-gray-600">
+              MetaMask is only needed for signing blockchain transactions. You can continue exploring the website freely!
+            </span>
+            <a
+              href="https://metamask.io/download/"
+              target="_blank"
+              rel="noreferrer"
+              className="mt-1 font-semibold text-teal-600 underline hover:text-teal-700"
+            >
+              Get MetaMask ↗
+            </a>
+          </div>
+        ), { duration: 6000, icon: '🦊' });
+        return null;
       }
     } catch (error) {
-      console.error('User rejected wallet connection or error:', error);
-      throw error;
+      console.warn('Wallet connection dismissed or failed:', error.message);
+      toast.error('Wallet connection cancelled or rejected.');
+      return null;
     } finally {
       setIsConnecting(false);
     }

@@ -1,17 +1,16 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import Nav_bar from "./Nav_bar";
-import Chatbot from "./ChatBot.jsx";
 import SliderBar from "./Slider";
+import { Web3Context } from "../context/Web3Context";
 
 
 const Homepage = () => {
 
   const backend_url = import.meta.env.VITE_BACKEND_URL;
 
-
-
   const navigate = useNavigate();
+  const { account, connectWallet } = useContext(Web3Context);
   const [feedback, setFeedback] = useState("");
   const [email, setEmail] = useState("");
   const [submitted, setSubmitted] = useState(false);
@@ -59,7 +58,31 @@ const Homepage = () => {
         <div className="absolute left-1/2 top-1/3 w-96 h-96 bg-gradient-to-br from-purple-400 to-blue-300 rounded-full opacity-20 blur-3xl animate-float"></div>
       </div>
       {/* Hero Section */}
-      <section className="flex flex-col items-center justify-center min-h-[60vh] pt-24 animate-fade-in-up">
+      <section className="flex flex-col items-center justify-center min-h-[60vh] pt-24 px-4 animate-fade-in-up">
+        {/* Open Access Mode Badge */}
+        <div className="mb-4 inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/80 backdrop-blur-md border border-teal-300 shadow-sm text-xs">
+          {account ? (
+            <>
+              <span className="w-2.5 h-2.5 rounded-full bg-green-500 animate-pulse"></span>
+              <span className="text-gray-700 font-semibold">Web3 Wallet:</span>
+              <span className="font-mono text-teal-700 font-bold">{account.slice(0, 6)}...{account.slice(-4)}</span>
+            </>
+          ) : (
+            <>
+              <span className="text-base">🌐</span>
+              <span className="text-gray-800 font-semibold">Open Access:</span>
+              <span className="text-gray-600">Anyone can browse the website freely.</span>
+              <span className="hidden sm:inline text-teal-700 font-bold">• MetaMask only required when transacting</span>
+              <button
+                onClick={connectWallet}
+                className="ml-2 px-2.5 py-0.5 rounded-full bg-teal-600 hover:bg-teal-700 text-white font-semibold text-[11px] transition shadow"
+              >
+                Connect Wallet
+              </button>
+            </>
+          )}
+        </div>
+
         <h1 className="text-5xl sm:text-6xl font-extrabold text-center text-teal-700 drop-shadow-lg tracking-tight mb-4 animate-bounce">
           Revolutionizing Healthcare Records
         </h1>
@@ -233,7 +256,6 @@ const Homepage = () => {
           </form>
         )}
       </section>
-      <Chatbot />
       <SliderBar/>
       {/* Impactful Info Section */}
       

@@ -38,11 +38,12 @@ const Login = () => {
     }
 
     if (!account) {
-      toast.loading("Connecting your Ethereum wallet...");
       try {
-        await connectWallet();
+        const connected = await connectWallet();
+        if (!connected) {
+          return;
+        }
       } catch (err) {
-        toast.dismiss();
         toast.error("Failed to connect wallet: " + err.message);
         return;
       }

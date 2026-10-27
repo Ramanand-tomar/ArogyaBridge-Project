@@ -4,21 +4,20 @@ import { useNavigate } from 'react-router-dom';
 
 const Walletconnect = () => {
   const navigate = useNavigate();
-  const { web3, account, contract, network } = useContext(Web3Context);
-  console.log("Web3 Context:", { web3, account, contract, network });
+  const { web3, account, contract, network, connectWallet } = useContext(Web3Context);
   const [status, setStatus] = useState('');
 
   useEffect(() => {
-    if (!web3) {
-      setStatus('Loading Web3...');
+    if (typeof window !== 'undefined' && !window.ethereum && !web3) {
+      setStatus('MetaMask not detected (Open Guest Access)');
       return;
     }
     if (!account) {
-      setStatus('Please connect your wallet.');
+      setStatus('Please connect your Web3 wallet');
       return;
     }
     if (!contract) {
-      setStatus('Loading contracts...');
+      setStatus('Loading smart contracts...');
       return;
     }
     if (!network) {
@@ -26,28 +25,50 @@ const Walletconnect = () => {
       return;
     }
     setStatus('Wallet connected');
-    
 
-    if (window.location.pathname !== '/home') {
+    if (window.location.pathname !== '/home' && window.location.pathname !== '/') {
       navigate('/home');
     }
   }, [web3, account, contract, network, navigate]);
 
   return (
-    <div className="min-h-screen flex flex-col justify-center items-center bg-gradient-to-b from-black to-gray-800 p-4 font-mono">
-      <div className="bg-gray-900 bg-opacity-90 backdrop-blur-lg p-10 rounded-3xl shadow-2xl flex flex-col items-center animate-fade-in max-w-md w-full">
-        <span className="bg-gradient-to-tr from-teal-500 to-blue-500 rounded-full p-4 mb-4 shadow-lg">
-          <svg className="h-12 w-12 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 9V7a5 5 0 00-10 0v2a2 2 0 00-2 2v6a2 2 0 002 2h12a2 2 0 002-2v-6a2 2 0 00-2-2z" /></svg>
+    <div className="fixed inset-0 z-50 flex flex-col justify-center items-center bg-black/60 backdrop-blur-md p-4">
+      <div className="bg-gray-900 border border-gray-800 p-8 rounded-3xl shadow-2xl flex flex-col items-center animate-fade-in max-w-md w-full text-center">
+        <span className="bg-gradient-to-tr from-teal-500 to-blue-500 rounded-full p-4 mb-4 shadow-lg text-3xl">
+          🩺
         </span>
-        <h1 className="text-3xl font-extrabold mb-4 text-teal-300 drop-shadow">Wallet Connection</h1>
-        <div className="w-full flex flex-col items-center">
-          <p className={`text-lg font-semibold mb-2 ${status === 'Wallet connected' ? 'text-green-400' : 'text-yellow-300 animate-pulse'}`}>{status}</p>
+        <h1 className="text-2xl font-extrabold mb-2 text-white">Wallet Connection</h1>
+        <p className="text-xs text-gray-400 mb-6 max-w-xs">
+          ArogyaBridge is completely open for everyone to explore. MetaMask is only required when signing blockchain transactions.
+        </p>
+
+        <div className="w-full flex flex-col items-center mb-6">
+          <p className={`text-sm font-semibold mb-3 ${status === 'Wallet connected' ? 'text-green-400' : 'text-teal-300'}`}>
+            {status}
+          </p>
           {account && (
-            <div className="text-sm text-gray-300 mb-2 break-all"><span className="font-bold text-teal-400">Account:</span> {account}</div>
+            <div className="text-xs text-gray-300 mb-2 font-mono bg-gray-800/80 px-3 py-1.5 rounded-lg border border-gray-700">
+              <span className="text-teal-400 font-bold">Account:</span> {account.slice(0, 8)}...{account.slice(-6)}
+            </div>
           )}
-          {network && (
-            <div className="text-sm text-gray-300 mb-2"><span className="font-bold text-teal-400">Network:</span> {network}</div>
+        </div>
+
+        <div className="flex flex-col gap-3 w-full">
+          {!account && (
+            <button
+              onClick={connectWallet}
+              className="w-full py-2.5 px-4 rounded-xl bg-gradient-to-r from-teal-500 to-blue-600 hover:from-teal-600 hover:to-blue-700 text-white font-bold text-sm shadow transition"
+            >
+              Connect MetaMask Wallet
+            </button>
           )}
+
+          <button
+            onClick={() => navigate('/')}
+            className="w-full py-2.5 px-4 rounded-xl bg-gray-800 hover:bg-gray-700 text-gray-200 font-semibold text-sm border border-gray-700 transition"
+          >
+            Explore Platform as Guest (No Wallet) →
+          </button>
         </div>
       </div>
     </div>

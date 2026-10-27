@@ -110,9 +110,30 @@ const DiagnosisRegistration = () => {
         <h1 className="text-3xl sm:text-4xl font-extrabold mb-2 text-center text-transparent bg-clip-text bg-gradient-to-r from-teal-400 to-blue-500">
           Diagnostic Center Registration
         </h1>
-        <p className="text-center text-xs text-gray-400 mb-8">
+        <p className="text-center text-xs text-gray-400 mb-6">
           Decentralized Laboratory Facility (Zero Passwords on Blockchain • Smart-Contract Verified)
         </p>
+
+        {!account && (
+          <div className="mb-8 p-4 rounded-2xl bg-teal-950/50 border border-teal-500/40 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <span className="text-2xl">🌐</span>
+              <div className="text-left">
+                <p className="text-sm font-bold text-teal-300">Open Access Form View</p>
+                <p className="text-xs text-gray-300">
+                  You can freely fill out and review your diagnostic center details. A Web3 wallet (like MetaMask) is only required when submitting the registration transaction.
+                </p>
+              </div>
+            </div>
+            <button
+              type="button"
+              onClick={connectWallet}
+              className="px-4 py-2 bg-gradient-to-r from-teal-500 to-blue-600 hover:from-teal-600 hover:to-blue-700 text-white font-bold text-xs rounded-xl shadow whitespace-nowrap transition"
+            >
+              Connect Wallet
+            </button>
+          </div>
+        )}
 
         <form className="grid grid-cols-1 md:grid-cols-2 gap-6" onSubmit={(e) => { e.preventDefault(); handleRegister(); }}>
           {/* Diagnostic Center Name */}
